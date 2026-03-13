@@ -37,7 +37,8 @@ const SCAFFOLD_SMOKE_FILES = [
 ];
 
 function runTestScaffold() {
-  const tmpDir = path.join(os.tmpdir(), 'create-awesome-software-smoke-' + Date.now());
+  // Use workspace (cwd) for temp dir so CI (e.g. GitHub Actions) has a reliable writable path
+  const tmpDir = path.join(process.cwd(), '.ci-scaffold-smoke-' + Date.now());
   const projectPath = path.join(tmpDir, 'test-project');
 
   try {
