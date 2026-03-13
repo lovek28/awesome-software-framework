@@ -11,6 +11,26 @@ This repository was created with [Awesome-Software-Framework](https://github.com
    - "Build a CRM system"
 3. Claude will read `.claude/workflow.state.json`, then work through: idea → product spec → domain → UX → UI system → architecture → backend → frontend → tests.
 
+## Local database setup (before running the backend)
+
+The backend needs a database on localhost. Do this **after** Claude has implemented the backend (or when you want to run it):
+
+1. **Start the database** (Postgres by default):
+   ```bash
+   docker compose up -d
+   ```
+2. **Copy env** and set `DATABASE_URL`:
+   ```bash
+   cp .env.example .env
+   ```
+3. **Run migrations** (e.g. Prisma):
+   ```bash
+   npx prisma migrate dev
+   ```
+4. Then start the API and web app as documented in `apps/api` and `apps/web`.
+
+See **infra/README.md** for MySQL/SQLite and more detail.
+
 ## Key Files
 
 - **CLAUDE.md** — Instructions for Claude (workflow, pipeline, stack).

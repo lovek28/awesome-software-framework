@@ -59,3 +59,12 @@ The user interacts via prompts. When they say things like "Build a marketplace f
 3. Execute the pipeline in order until you reach implementation, then implement according to the spec and architecture.
 
 Do not jump to code. Always advance through the pipeline deterministically.
+
+## 8. Local database (backend stage)
+
+When implementing the **backend** stage, ensure the app runs against a **database on localhost**:
+
+- **Use `DATABASE_URL`** from the environment for all DB connections. The project has `.env.example` and `docker-compose.yml` (Postgres) at the root; do not hardcode connection strings.
+- **ORM config**: Point the ORM (Prisma, Drizzle, TypeORM, etc.) at `process.env.DATABASE_URL`. For Prisma, set `url = env("DATABASE_URL")` in `schema.prisma` and use the existing `.env.example` format.
+- **Migrations**: Add and run migrations via the chosen ORM (e.g. `npx prisma migrate dev`). Place schema/migrations in the repo per `spec/architecture/data-model.md`.
+- **Document run steps** in `apps/api/README.md` or the project README: start DB (`docker compose up -d`), copy `.env.example` to `.env`, run migrations, then start the API. This ensures the database builds properly on localhost.
