@@ -1,0 +1,9 @@
+# OpenAPI 3.x — generated from spec/architecture/backend.md and data-model.md.
+# Claude: after architecture stage, fill this from endpoints and entities. Backend and frontend must conform.
+openapi: 3.0.3
+info:
+  title: API
+  version: 0.1.0
+paths: {}
+# Add paths from backend.md (e.g. /api/v1/resources). Use data-model and domain entities for request/response shapes.
+# components/schemas: define reusable schemas from domain entities.

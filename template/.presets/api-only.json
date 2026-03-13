@@ -1,0 +1,7 @@
+{
+  "name": "api-only",
+  "description": "REST API only, no web UI",
+  "suggestedStack": { "frontend": "none", "backend": "fastify", "database": "postgres", "orm": "prisma" },
+  "productSnippet": "REST API: resources and endpoints per domain. No frontend; API is consumed by other clients. Document OpenAPI.",
+  "stagesInScope": ["idea", "product_spec", "domain_rules", "architecture", "api_contract", "backend", "tests"]
+}

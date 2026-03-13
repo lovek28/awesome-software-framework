@@ -1,0 +1,7 @@
+{
+  "name": "auth-dashboard",
+  "description": "App with auth and dashboard",
+  "suggestedStack": { "frontend": "nextjs", "backend": "fastify", "database": "postgres", "orm": "prisma", "styling": "tailwind", "auth": "nextauth", "auth_provider": "github" },
+  "productSnippet": "Authenticated dashboard: sign-in (e.g. GitHub), protected dashboard, user-scoped data. Core features: auth, dashboard layout, at least one data view.",
+  "stagesInScope": ["idea", "product_spec", "domain_rules", "ux_flow", "ui_system", "architecture", "backend", "frontend", "tests"]
+}

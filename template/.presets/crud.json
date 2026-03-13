@@ -1,0 +1,7 @@
+{
+  "name": "crud",
+  "description": "CRUD app for a single resource",
+  "suggestedStack": { "frontend": "nextjs", "backend": "fastify", "database": "postgres", "orm": "prisma", "styling": "tailwind" },
+  "productSnippet": "CRUD for resource: create, list, read, update, delete. Single main entity with standard REST API and simple UI.",
+  "stagesInScope": ["idea", "product_spec", "domain_rules", "ux_flow", "ui_system", "architecture", "backend", "frontend", "tests"]
+}

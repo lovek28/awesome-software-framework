@@ -6,11 +6,15 @@
     "ux_flow",
     "ui_system",
     "architecture",
+    "api_contract",
     "backend",
     "frontend",
-    "tests"
+    "tests",
+    "docs"
   ],
-  "optional": ["tests"],
+  "optional": ["tests", "api_contract", "docs"],
+  "testCoverageMin": 80,
+  "hooks": {},
   "stages": {
     "idea": { "description": "Capture and clarify the user's idea." },
     "product_spec": { "description": "Write spec/product/spec.md (problem, users, features, requirements, constraints)." },
@@ -18,8 +22,10 @@
     "ux_flow": { "description": "Write spec/ux/flows.md and spec/ux/states.md." },
     "ui_system": { "description": "Write spec/ui/system.md (components, design principles)." },
     "architecture": { "description": "Write spec/architecture/overview.md, backend.md, frontend.md, data-model.md." },
+    "api_contract": { "description": "Generate spec/api/openapi.yaml from backend.md and data-model.md; backend and frontend conform to it.", "optional": true },
     "backend": { "description": "Implement in packages/domain, packages/services, apps/api." },
     "frontend": { "description": "Implement in packages/ui, apps/web." },
-    "tests": { "description": "Implement in tests/unit, tests/integration, tests/e2e.", "optional": true }
+    "tests": { "description": "Implement in tests/unit, tests/integration, tests/e2e.", "optional": true },
+    "docs": { "description": "Generate docs/ from spec (product-overview, user-flows, API docs from OpenAPI).", "optional": true }
   }
 }

@@ -69,8 +69,19 @@ When `stack.config.json` has `"database": "sqlite"`, **no Docker is needed**.
 
 ## Environment matrix
 
-- **development**: Use the URLs above (localhost Postgres/MySQL or `file:./dev.db` for SQLite).
-- **staging / production**: Set `DATABASE_URL` (and other vars) per environment. Use your host’s env or secrets; do not commit production URLs.
+- **development**: Use the URLs above (localhost Postgres/MySQL or `file:./dev.db` for SQLite). Copy `.env.example` to `.env` and fill for local use.
+- **staging / production**: Set `DATABASE_URL`, `API_URL` (or `NEXT_PUBLIC_API_URL`), and all secrets per environment. Use your host’s env or CI secrets; do not commit production URLs. Many platforms (Vercel, Fly, Railway) inject env at deploy time.
+
+## Deployment (when stack.config.json has deploy)
+
+When `deploy` is set (e.g. `vercel`, `docker`, `fly`, `railway`), generate deployment config in a **deploy_config** stage or as part of infra:
+
+- **Vercel**: `vercel.json`, connect repo; set env in Vercel dashboard.
+- **Docker**: Dockerfile (and optionally docker-compose for prod); document `docker build` / `docker run`.
+- **Fly**: `fly.toml`; document `fly launch` and `fly deploy`.
+- **Railway**: Connect repo; set env in Railway dashboard; document deploy trigger.
+
+Document exact steps in this README or in a `deploy.md` under `infra/`. Use `.github/workflows/ci.yml.example` as a base for CI (build, test, optional deploy); copy to `.github/workflows/ci.yml` and adapt Node version and env.
 
 ## Role
 
