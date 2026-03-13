@@ -6,7 +6,7 @@ Database, hosting, and deployment configuration.
 
 Projects need a running database on localhost for the backend to work. Follow the steps below based on `stack.config.json`.
 
-### PostgreSQL (default / standard stack)
+### PostgreSQL
 
 1. **Start Postgres** (from project root):
    ```bash

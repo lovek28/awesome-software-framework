@@ -6,7 +6,7 @@ A framework that lets you scaffold a repository for **Specification-First Develo
 
 This package is not published to npm. Use it directly from GitHub.
 
-**Option 1 — run without cloning** (replace `Love-Toolbx` and repo name with this repo):
+**Option 1 — run without cloning:**
 
 ```bash
 npx github:Love-Toolbx/awesome-software-framework myapp
@@ -20,38 +20,15 @@ cd awesome-software-framework
 node cli.js myapp
 ```
 
-You’ll be asked whether to use the **standard stack** or pick your own:
-
-- **Standard stack** (default): Next.js, Fastify, Postgres, Prisma, Tailwind CSS  
-- **Custom**: choose frontend, backend, database, ORM, and styling from the listed options
-
-To skip prompts and use the standard stack, add `--yes` or `-y`:
-
-```bash
-npx github:Love-Toolbx/awesome-software-framework myapp --yes
-# or when using clone:
-node cli.js myapp -y
-```
-
 Then:
 
 ```bash
 cd myapp
 ```
 
-Open the project in VS Code (or Cursor) and start building with Claude. Your choices are saved in `stack.config.json`; Claude uses that file when generating code.
+Open the project in **Cursor** (or VS Code) and tell Claude what you want to build (e.g. "Build a marketplace for freelancers"). **Claude will ask you** for tech stack (frontend, backend, database, ORM, styling) and any other relevant choices, then run the full pipeline. You can pick from common options or name any other technology.
 
 > **If this package is later published to npm**, you’ll be able to run `npx create-awesome-software myapp` instead.
-
-### Stack options (when not using standard)
-
-| Category | Options |
-|---------|---------|
-| Frontend | Next.js, Remix, React (Vite) |
-| Backend | Fastify, Express, NestJS |
-| Database | PostgreSQL, MySQL, SQLite |
-| ORM | Prisma, Drizzle, TypeORM |
-| Styling | Tailwind CSS, CSS Modules, styled-components |
 
 ## How It Works
 

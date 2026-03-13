@@ -1,7 +1,1 @@
-{
-  "frontend": "nextjs",
-  "backend": "fastify",
-  "database": "postgres",
-  "orm": "prisma",
-  "styling": "tailwind"
-}
+{}

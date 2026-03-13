@@ -4,18 +4,19 @@ This repository was created with [Awesome-Software-Framework](https://github.com
 
 ## Get Started
 
-1. Open this project in VS Code or Cursor.
-2. Tell Claude your idea, e.g.:
+1. Open this project in Cursor (or VS Code).
+2. Tell Claude what you want to build, e.g.:
    - "Build a SaaS platform for suppliers"
    - "Build a marketplace for freelancers"
    - "Build a CRM system"
-3. Claude will read `.claude/workflow.state.json`, then work through: idea → product spec → domain → UX → UI system → architecture → backend → frontend → tests.
+3. Claude will **ask you** for tech stack (frontend, backend, database, ORM, styling) and any other relevant questions, then write choices to `stack.config.json`.
+4. Claude then runs the pipeline: idea → product spec → domain → UX → UI system → architecture → backend → frontend → tests.
 
 ## Local database setup (before running the backend)
 
 The backend needs a database on localhost. Do this **after** Claude has implemented the backend (or when you want to run it):
 
-1. **Start the database** (Postgres by default):
+1. **Start the database** (e.g. Postgres — see `stack.config.json`):
    ```bash
    docker compose up -d
    ```

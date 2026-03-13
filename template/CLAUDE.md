@@ -35,7 +35,7 @@ After completing a stage, update `workflow.state.json`: set `stage` to the next 
 
 ## 4. Stack Configuration
 
-**Always read `stack.config.json`** before generating code. Use the defined stack (frontend, backend, database, orm, styling, etc.) for all implementation. Do not introduce technologies outside this config unless the user explicitly requests it.
+**Always read `stack.config.json`** before generating code. If it is empty (e.g. `{}`), ask the user for tech choices, write them to `stack.config.json`, then proceed. Use the defined stack (frontend, backend, database, orm, styling, etc.) for all implementation. Do not introduce technologies outside this config unless the user explicitly requests it.
 
 ## 5. Token Efficiency
 
@@ -51,14 +51,23 @@ After completing a stage, update `workflow.state.json`: set `stage` to the next 
 
 Keep domain logic in `packages/domain`, application services in `packages/services`, and follow the layered architecture described in `spec/architecture/`.
 
-## 7. Chat-First Development
+## 7. Chat-First Development — Ask the user for choices
 
 The user interacts via prompts. When they say things like "Build a marketplace for freelancers" or "Build a CRM system":
-1. Read workflow state.
-2. Start from the idea stage (or the next incomplete stage).
-3. Execute the pipeline in order until you reach implementation, then implement according to the spec and architecture.
 
-Do not jump to code. Always advance through the pipeline deterministically.
+1. **Read workflow state** and start from the idea stage (or the next incomplete stage).
+2. **Before writing specs or code, ask the user all relevant questions** so you can fill `stack.config.json` and proceed correctly. Do **not** assume the stack; the CLI does not collect it — you must.
+3. **Tech stack questions** — Ask in chat (one message or a short list is fine):
+   - **Frontend**: e.g. Next.js, Remix, React (Vite), Vue, Svelte, or other. Accept any answer.
+   - **Backend**: e.g. Fastify, Express, NestJS, Hono, or other. Accept any answer.
+   - **Database**: e.g. PostgreSQL, MySQL, SQLite, or other. Accept any answer.
+   - **ORM / data layer**: e.g. Prisma, Drizzle, TypeORM, Knex, or "none" / raw SQL. Accept any answer.
+   - **Styling**: e.g. Tailwind CSS, CSS Modules, styled-components, or other. Accept any answer.
+   There is no default stack in the repo — you decide with the user. Write the user's choices to `stack.config.json` (use the keys: `frontend`, `backend`, `database`, `orm`, `styling`). Add other keys if the user names additional concerns (e.g. auth, hosting).
+4. **Other relevant questions** — Depending on the idea, ask about: target users, must-have features, constraints, or preferences. Use answers to fill `spec/product/spec.md` and the rest of the pipeline.
+5. Then execute the pipeline in order and implement according to the spec and architecture.
+
+Do not jump to code. Always advance through the pipeline deterministically. The user can give any technology names; you are not limited to a fixed list.
 
 ## 8. Local database (backend stage)
 
