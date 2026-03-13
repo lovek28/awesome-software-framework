@@ -1,0 +1,13 @@
+{
+  "pipeline": [
+    "idea",
+    "product_spec",
+    "domain_rules",
+    "ux_flow",
+    "ui_system",
+    "architecture",
+    "backend",
+    "frontend",
+    "tests"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "create-awesome-software",
+  "version": "1.0.0",
+  "description": "Scaffold a repository for Specification-First Development with Claude Code",
+  "bin": {
+    "create-awesome-software": "cli.js"
+  },
+  "keywords": [
+    "claude",
+    "specification-first",
+    "sdlc",
+    "scaffold",
+    "framework"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "cli.js",
+    "template"
+  ]
+}
