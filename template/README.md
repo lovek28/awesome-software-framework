@@ -1,6 +1,6 @@
 # Project
 
-This repository was created with [Awesome-Software-Framework](https://github.com/your-org/awesome-software-framework). It uses **Specification-First Development**: Claude follows a deterministic pipeline and does not generate implementation code before architecture exists.
+This repository was created with [Awesome-Software-Framework](https://github.com/Love-Toolbx/awesome-software-framework). It uses **Specification-First Development**: Claude follows a deterministic pipeline and does not generate implementation code before architecture exists.
 
 ## Get Started
 

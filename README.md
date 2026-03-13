@@ -4,8 +4,20 @@ A framework that lets you scaffold a repository for **Specification-First Develo
 
 ## Install
 
+This package is not published to npm. Use it directly from GitHub.
+
+**Option 1 — run without cloning** (replace `Love-Toolbx` and repo name with this repo):
+
 ```bash
-npx create-awesome-software myapp
+npx github:Love-Toolbx/awesome-software-framework myapp
+```
+
+**Option 2 — clone and run:**
+
+```bash
+git clone https://github.com/Love-Toolbx/awesome-software-framework.git
+cd awesome-software-framework
+node cli.js myapp
 ```
 
 You’ll be asked whether to use the **standard stack** or pick your own:
@@ -13,12 +25,12 @@ You’ll be asked whether to use the **standard stack** or pick your own:
 - **Standard stack** (default): Next.js, Fastify, Postgres, Prisma, Tailwind CSS  
 - **Custom**: choose frontend, backend, database, ORM, and styling from the listed options
 
-To skip prompts and use the standard stack:
+To skip prompts and use the standard stack, add `--yes` or `-y`:
 
 ```bash
-npx create-awesome-software myapp --yes
-# or
-npx create-awesome-software myapp -y
+npx github:Love-Toolbx/awesome-software-framework myapp --yes
+# or when using clone:
+node cli.js myapp -y
 ```
 
 Then:
@@ -28,6 +40,8 @@ cd myapp
 ```
 
 Open the project in VS Code (or Cursor) and start building with Claude. Your choices are saved in `stack.config.json`; Claude uses that file when generating code.
+
+> **If this package is later published to npm**, you’ll be able to run `npx create-awesome-software myapp` instead.
 
 ### Stack options (when not using standard)
 
