@@ -1,0 +1,46 @@
+# Copy to .github/workflows/ci.yml and adapt (Node version, env, deploy).
+# Build and test; optionally deploy when stack has deploy target.
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+        # or: npm install (if no lockfile)
+
+      - name: Lint
+        run: npm run lint
+        # omit if no lint script
+
+      - name: Test
+        run: npm test
+        # set env (e.g. DATABASE_URL for integration tests) via job env or secrets
+
+  # Optional: deploy job when deploy target is set (e.g. Vercel, Fly).
+  # deploy:
+  #   needs: build-and-test
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Deploy
+  #       run: ...
+  #       env:
+  #         DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}

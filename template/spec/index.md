@@ -21,6 +21,8 @@
 | [Backend](architecture/backend.md) | API and services |
 | [Frontend](architecture/frontend.md) | Web app structure |
 | [Data Model](architecture/data-model.md) | Persistence and schema |
+| [Security](security.md) | Security checklist (OWASP-oriented) |
+| [API Contract](api/openapi.yaml) | OpenAPI spec (when used) |
 
 ## Pipeline Status
 

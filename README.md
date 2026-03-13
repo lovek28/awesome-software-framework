@@ -1,4 +1,4 @@
-# Awesome-Software-Framework v1.0.0
+# Awesome-Software-Framework v2.0.0
 
 A framework that lets you scaffold a repository for **Specification-First Development** with Claude Code. Claude follows a deterministic software development lifecycle and never generates implementation code before architecture exists.
 
@@ -24,12 +24,13 @@ node cli.js myapp
 
 **Commands:**
 
-- `upgrade [path]` — Pull non-destructive template updates into an existing project (CLAUDE.md, workflow.config.json, .claude/instructions.md, docker-compose files, .env.example). Run from the project root or pass the project path. Specs, code, stack.config.json, and workflow state are left unchanged.
+- `create-awesome-software <project-name>` — Scaffold a new project.
+- `upgrade [path]` — Pull non-destructive template updates (CLAUDE, workflow, .claude/instructions, agents, context-scope, extensibility, docker-compose, .env.example). Specs, code, stack.config.json, and workflow state are left unchanged. Run from project root or pass the path.
 
 **Options:**
 
 - `-v` / `--version` — Print the CLI version and exit.
-- `-o` / `--output-dir <path>` — Create the project in the given directory (default: current directory). Example: `node cli.js myapp -o ../projects`
+- `-o` / `--output-dir <path>` — Create the project in the given directory (default: current directory).
 
 When you run the CLI to create a project, it may print a one-line notice if a newer version is available (e.g. “Update available: 1.1.0”). Set `NO_UPDATE_CHECK=1` to disable this check; the CLI uses a short timeout and does not block if offline.
 
@@ -47,25 +48,25 @@ Open the project in **Cursor** (or VS Code) and tell Claude what you want to bui
 
 ## How It Works
 
-1. **You describe the product** in natural language, e.g.:
-   - "Build a SaaS platform for suppliers"
-   - "Build a marketplace for freelancers"
-   - "Build a CRM system"
+1. **You describe the product** in natural language ("Build a CRUD app for inventory", "Build a dashboard with login", etc.).
+2. **Claude runs a structured pipeline**: Idea → Product Spec → Domain → UX → UI System → Architecture → (optional API contract) → Backend → Frontend → Tests → (optional Docs). Optional and custom stages; presets (CRUD, auth-dashboard, api-only) speed up common shapes.
+3. **Specification first**: Specs (product, domain, UX, UI, architecture, security) are written before code.
+4. **Stack-aware**: `stack.config.json` holds frontend, backend, database, ORM, styling, and optionally auth, deploy, multi-app; Claude generates code to match.
 
-2. **Claude runs a structured SDLC pipeline** in this order:
-   - Idea
-   - Product Specification
-   - Domain Design
-   - UX Flows
-   - UI System
-   - System Architecture
-   - Backend Implementation
-   - Frontend Implementation
-   - Testing
+## Features
 
-3. **Specification first**: Claude writes and updates spec files (product, domain, UX, UI, architecture) before generating any application code.
-
-4. **Stack-aware**: Technology choices are defined in `stack.config.json`; Claude follows them when generating code.
+- **Workflow flexibility** — Optional/custom stages, stage descriptions, quality gates, modes (quick vs full), checkpoints and resume.
+- **Auth & security** — Optional auth in stack; `spec/security.md` checklist; secrets in env only.
+- **Deployment & CI** — Optional deploy target; deploy_config stage; `.github/workflows/ci.yml.example`; env matrix.
+- **API contract** — Optional OpenAPI (`spec/api/openapi.yaml`); backend/frontend conform.
+- **Tests** — Test runner and E2E bootstrap; optional coverage; spec-driven test cases.
+- **Observability** — Health endpoint; structured logging; optional runbooks and ADRs.
+- **Multi-app & presets** — Optional admin/mobile in stack; presets (crud, auth-dashboard, api-only).
+- **Extensibility** — Hooks (before/after stage), custom stages, plugin contract draft.
+- **Docs from spec** — Optional docs stage; API and product/UX docs from spec.
+- **Agents** — Per-stage instructions (`.claude/stages/`), Cursor agents (Spec, Backend, Frontend), `.claude/agents.md`.
+- **Skills** — Stack and stage skills (`.claude/skills/`); Next.js, Fastify, Prisma, product-spec, api-design.
+- **Token control** — Per-stage context scope (`.claude/context-scope.md`), optional summarization.
 
 ## Core Principles
 
@@ -80,22 +81,31 @@ Open the project in **Cursor** (or VS Code) and tell Claude what you want to bui
 
 ```
 myapp/
-├── CLAUDE.md              # Instructions for Claude
-├── stack.config.json      # Technology stack
-├── workflow.config.json   # Pipeline stages
+├── CLAUDE.md
+├── stack.config.json
+├── workflow.config.json   # pipeline, optional stages, hooks, testCoverageMin
 ├── .claude/
-│   ├── workflow.state.json
-│   └── instructions.md
+│   ├── workflow.state.json   # stage, idea, completed, mode
+│   ├── instructions.md
+│   ├── agents.md             # Stage agents (Spec, Backend, Frontend)
+│   ├── context-scope.md      # What to read per stage
+│   ├── extensibility.md      # Hooks, custom stages
+│   ├── stages/               # Per-stage instructions
+│   └── skills/               # Stack and stage skills
 ├── spec/
 │   ├── index.md
 │   ├── product/spec.md
 │   ├── domain/ (entities, rules, glossary)
 │   ├── ux/ (flows, states)
 │   ├── ui/system.md
-│   └── architecture/ (overview, backend, frontend, data-model)
-├── apps/ (web, api)
+│   ├── architecture/ (overview, backend, frontend, data-model, runbooks, adr/)
+│   ├── security.md
+│   └── api/openapi.yaml      # When using API contract
+├── .presets/                 # crud, auth-dashboard, api-only (optional)
+├── apps/ (web, api; optionally admin, mobile)
 ├── packages/ (domain, services, ui, shared)
 ├── tests/ (unit, integration, e2e)
+├── docs/                     # Generated from spec (optional)
 └── infra/
 ```
 

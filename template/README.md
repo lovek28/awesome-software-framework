@@ -44,6 +44,8 @@ See **infra/README.md** for MySQL/SQLite and more detail.
 
 - **CLAUDE.md** — Instructions for Claude (workflow, pipeline, stack).
 - **.claude/workflow.state.json** — Current stage and completed stages; Claude reads this first.
+- **.claude/agents.md** — Stage-based agents (Spec Writer, Backend, Frontend); use for focused edits.
+- **.claude/stages/** — Per-stage instruction files; read the one for the current stage when using an agent.
 - **workflow.config.json** — Ordered pipeline stages.
 - **stack.config.json** — Frontend, backend, database, ORM, styling; Claude follows this when generating code.
 - **spec/** — Product, domain, UX, UI, and architecture specs; fill these before implementation.

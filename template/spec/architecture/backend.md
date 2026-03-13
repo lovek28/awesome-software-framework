@@ -7,6 +7,8 @@
 - **Protocol**: REST over HTTP (or document if using GraphQL).
 - **Base path**: e.g. `/api/v1` for versioning.
 - **Auth**: How requests are authenticated (e.g. JWT, session, API key). Where it is validated (middleware, per-route).
+- **Health**: Always expose `GET /health` or `GET /api/health` returning 200; optionally check DB. Used by deploy and load balancers.
+- **Logging**: Structured logging (request id, level, message). Optional observability per `stack.config.json` (e.g. Sentry, Datadog).
 
 ## Endpoints
 
