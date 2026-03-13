@@ -1,6 +1,8 @@
 # Project
 
-This repository was created with [Awesome-Software-Framework](https://github.com/Love-Toolbx/awesome-software-framework). It uses **Specification-First Development**: Claude follows a deterministic pipeline and does not generate implementation code before architecture exists.
+This repository was created with [Awesome-Software-Framework](https://github.com/lovek28/awesome-software-framework). It uses **Specification-First Development**: Claude follows a deterministic pipeline and does not generate implementation code before architecture exists.
+
+The file **`.framework-version`** at the project root records which framework version this project was scaffolded with. It is used for upgrades: a future CLI command (e.g. `create-awesome-software upgrade` or `--upgrade`) can compare this version to the latest framework and offer to pull non-destructive updates (e.g. updated CLAUDE.md, workflow.config.json, .claude/instructions.md) while leaving your specs, code, and workflow state unchanged.
 
 ## Get Started
 

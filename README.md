@@ -1,6 +1,8 @@
-# Awesome-Software-Framework
+# Awesome-Software-Framework v1.0.0
 
 A framework that lets you scaffold a repository for **Specification-First Development** with Claude Code. Claude follows a deterministic software development lifecycle and never generates implementation code before architecture exists.
+
+**Repository:** [github.com/lovek28/awesome-software-framework](https://github.com/lovek28/awesome-software-framework)
 
 ## Install
 
@@ -9,16 +11,25 @@ This package is not published to npm. Use it directly from GitHub.
 **Option 1 — run without cloning:**
 
 ```bash
-npx github:Love-Toolbx/awesome-software-framework myapp
+npx github:lovek28/awesome-software-framework myapp
 ```
 
 **Option 2 — clone and run:**
 
 ```bash
-git clone https://github.com/Love-Toolbx/awesome-software-framework.git
+git clone https://github.com/lovek28/awesome-software-framework.git
 cd awesome-software-framework
 node cli.js myapp
 ```
+
+**Options:**
+
+- `-v` / `--version` — Print the CLI version and exit.
+- `-o` / `--output-dir <path>` — Create the project in the given directory (default: current directory). Example: `node cli.js myapp -o ../projects`
+
+When you run the CLI to create a project, it may print a one-line notice if a newer version is available (e.g. “Update available: 1.1.0”). Set `NO_UPDATE_CHECK=1` to disable this check; the CLI uses a short timeout and does not block if offline.
+
+After scaffolding, the new project contains a `.framework-version` file with the framework version it was created with. This is used for future upgrade tooling (e.g. pulling non-destructive template updates). See the project’s README for upgrade strategy.
 
 Then:
 
