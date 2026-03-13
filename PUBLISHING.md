@@ -41,6 +41,20 @@ git push -u origin main
   ```
   Or they can clone and run `node cli.js myapp` from the repo root.
 
-- **Publishing to npm** (optional): If you want `npx create-awesome-software` to work without the `github:` prefix, publish the package to npm:
-  1. Create an account at [npmjs.com](https://www.npmjs.com/signup).
-  2. Run `npm login`, then `npm publish` from this directory (with a unique package name if `create-awesome-software` is taken).
+---
+
+## Publishing to npm
+
+If you want `npx create-awesome-software` to work without the `github:` prefix, publish the package to npm. Use this checklist for each release:
+
+1. **Create an npm account** (once): [npmjs.com](https://www.npmjs.com/signup). Run `npm login` from this directory.
+2. **Bump version** in [package.json](package.json) (e.g. `1.0.0` → `1.1.0`). Use [Semantic Versioning](https://semver.org/).
+3. **Update [CHANGELOG.md](CHANGELOG.md)**: add a new `## [X.Y.Z] - YYYY-MM-DD` section and move items from `[Unreleased]` into it; add "Added / Changed / Fixed" entries for the release.
+4. **Tag the release**: e.g. `git tag v1.1.0` and `git push origin v1.1.0`.
+5. **Publish**: from this directory run `npm publish`. If the package name `create-awesome-software` is taken, use a scoped or different name in `package.json`.
+
+After publishing, users can run:
+
+```bash
+npx create-awesome-software myapp
+```
