@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "project",
+  "version": "0.0.0",
+  "description": "Monorepo root. Run npm install / pnpm install at root after stack is chosen to link apps and packages.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "install:root": "echo 'Run npm install or pnpm install at root to link workspaces.'"
+  }
+}

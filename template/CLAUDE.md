@@ -13,17 +13,13 @@ Do not skip stages. Do not generate implementation (backend, frontend, tests) un
 
 ## 2. Pipeline Order
 
-Stages must be executed in this order (defined in `workflow.config.json`):
+Stages are defined in `workflow.config.json`:
 
-1. **idea** — Capture and clarify the user's idea.
-2. **product_spec** — Write `spec/product/spec.md` (problem, users, features, requirements, constraints).
-3. **domain_rules** — Write `spec/domain/entities.md`, `spec/domain/rules.md`, `spec/domain/glossary.md`.
-4. **ux_flow** — Write `spec/ux/flows.md` and `spec/ux/states.md`.
-5. **ui_system** — Write `spec/ui/system.md` (components, design principles).
-6. **architecture** — Write `spec/architecture/overview.md`, `backend.md`, `frontend.md`, `data-model.md`.
-7. **backend** — Implement in `packages/domain`, `packages/services`, `apps/api`.
-8. **frontend** — Implement in `packages/ui`, `apps/web`.
-9. **tests** — Implement in `tests/unit`, `tests/integration`, `tests/e2e`.
+- **pipeline**: Ordered list of stage IDs. Execute in this order. Projects may add **custom stages** (e.g. `docs`, `deploy_config`) to the list; run them in order when present. See `.claude/instructions.md` for how to implement custom stages.
+- **optional**: List of stage IDs that are optional (e.g. `tests`). For an optional stage: ask the user if they want it (e.g. "Do you want tests for this project?") or skip when not needed. Required stages are always enforced.
+- **stages**: Optional map of stage ID to `{ "description": "...", "optional": true }`. Use the description as the single source for "what to do at this stage."
+
+Default pipeline order: **idea** → **product_spec** → **domain_rules** → **ux_flow** → **ui_system** → **architecture** → **backend** → **frontend** → **tests** (and any custom stages after or between these).
 
 After completing a stage, update `workflow.state.json`: set `stage` to the next stage and add the completed stage to `completed`.
 
@@ -35,7 +31,11 @@ After completing a stage, update `workflow.state.json`: set `stage` to the next 
 
 ## 4. Stack Configuration
 
-**Always read `stack.config.json`** before generating code. If it is empty (e.g. `{}`), ask the user for tech choices, write them to `stack.config.json`, then proceed. Use the defined stack (frontend, backend, database, orm, styling, etc.) for all implementation. Do not introduce technologies outside this config unless the user explicitly requests it.
+**Always read `stack.config.json`** before generating code.
+
+**Stack validation:** After writing or updating `stack.config.json`, it must contain at least **frontend**, **backend**, and **database** (and optionally `orm`, `styling`, etc.). If the user skips one, ask again or fill a sensible default for that key only (e.g. "No frontend?" → "I'll set frontend to nextjs unless you prefer something else."). Do not leave required keys missing.
+
+If the file is empty (e.g. `{}`), ask the user for tech choices, write them to `stack.config.json` with at least frontend, backend, database, then proceed. Use the defined stack for all implementation. Do not introduce technologies outside this config unless the user explicitly requests it.
 
 ## 5. Token Efficiency
 
@@ -73,7 +73,10 @@ Do not jump to code. Always advance through the pipeline deterministically. The 
 
 When implementing the **backend** stage, ensure the app runs against a **database on localhost**:
 
-- **Use `DATABASE_URL`** from the environment for all DB connections. The project has `.env.example` and `docker-compose.yml` (Postgres) at the root; do not hardcode connection strings.
+- **Use `DATABASE_URL`** from the environment for all DB connections. The project has `.env.example` at the root; do not hardcode connection strings.
+- **Database choice** (from `stack.config.json`):
+  - **PostgreSQL / MySQL**: Use `docker-compose.yml` (Postgres by default) or `docker-compose.mysql.yml` if database is MySQL. See `infra/README.md`. Set `DATABASE_URL` in `.env` to match (e.g. `postgresql://...` or `mysql://...`).
+  - **SQLite**: No Docker needed. Set `DATABASE_URL=file:./dev.db` (or `file:./data/dev.db`) in `.env`. The ORM will create the file. Document in `apps/api/README.md` that for SQLite the user only needs to copy `.env.example` to `.env` and run migrations.
 - **ORM config**: Point the ORM (Prisma, Drizzle, TypeORM, etc.) at `process.env.DATABASE_URL`. For Prisma, set `url = env("DATABASE_URL")` in `schema.prisma` and use the existing `.env.example` format.
 - **Migrations**: Add and run migrations via the chosen ORM (e.g. `npx prisma migrate dev`). Place schema/migrations in the repo per `spec/architecture/data-model.md`.
-- **Document run steps** in `apps/api/README.md` or the project README: start DB (`docker compose up -d`), copy `.env.example` to `.env`, run migrations, then start the API. This ensures the database builds properly on localhost.
+- **Document run steps** in `apps/api/README.md` or the project README: for Postgres/MySQL — start DB (`docker compose up -d`), copy `.env.example` to `.env`, run migrations, then start the API; for SQLite — copy `.env.example` to `.env`, run migrations, then start the API.

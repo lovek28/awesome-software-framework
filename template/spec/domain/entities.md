@@ -1,5 +1,7 @@
 # Domain Entities
 
+> **Claude:** Before marking domain_rules done, ensure at least one entity is defined with Identity, Attributes, and Relationships.
+>
 > Describe the main entities of the domain. Each entity should have a clear identity and responsibilities. Product-agnostic template; replace placeholders with your domain.
 
 ## Entity: [Name]
