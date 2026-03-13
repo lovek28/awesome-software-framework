@@ -1,5 +1,7 @@
 # Product Specification
 
+> **Claude:** Before marking product_spec done, ensure Problem, Target Users, Core Features, and at least one Functional Requirement are filled.
+>
 > Fill this document based on the user's idea. Keep it product-agnostic in structure; the content is project-specific.
 
 ## Problem

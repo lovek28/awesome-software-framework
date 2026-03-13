@@ -1,5 +1,7 @@
 # User Flows
 
+> **Claude:** Before marking ux_flow done, ensure at least one flow is described with Trigger, Actor, Goal, Steps, and Outcome.
+>
 > User journeys and flows. Describe steps and outcomes; keep implementation-agnostic.
 
 ## Flow: [Flow Name]

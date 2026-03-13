@@ -4,7 +4,7 @@ Database, hosting, and deployment configuration.
 
 ## Local database (localhost)
 
-Projects need a running database on localhost for the backend to work. Follow the steps below based on `stack.config.json`.
+Projects need a running database on localhost for the backend to work (unless using SQLite). Follow the steps below based on `stack.config.json` **database** value.
 
 ### PostgreSQL
 
@@ -28,13 +28,49 @@ Projects need a running database on localhost for the backend to work. Follow th
 
 4. **Stop**: `docker compose down` (data persists in volume). `docker compose down -v` removes data.
 
-### MySQL (if chosen in stack)
+### MySQL
 
-Use a MySQL image in `docker-compose.yml` instead of Postgres (see [MySQL Docker docs](https://hub.docker.com/_/mysql)). Set `DATABASE_URL` in `.env` to your MySQL connection string. Run your ORM migrations the same way.
+When `stack.config.json` has `"database": "mysql"` (or similar), use the MySQL Compose file:
 
-### SQLite (if chosen in stack)
+1. **Start MySQL** (from project root):
+   ```bash
+   docker compose -f docker-compose.mysql.yml up -d
+   ```
+   This starts MySQL on `localhost:3306` with database `app`, user `app`, password `app`.
 
-No Docker needed. Set `DATABASE_URL="file:./dev.db"` (or similar) in `.env`. Run migrations; the file is created locally.
+2. **Set env**: Copy `.env.example` to `.env` and set:
+   ```bash
+   DATABASE_URL="mysql://app:app@localhost:3306/app"
+   ```
+
+3. **Run migrations** (e.g. Prisma):
+   ```bash
+   npx prisma migrate dev
+   ```
+
+4. **Stop**: `docker compose -f docker-compose.mysql.yml down`
+
+### SQLite
+
+When `stack.config.json` has `"database": "sqlite"`, **no Docker is needed**.
+
+1. **Set env**: Copy `.env.example` to `.env` and set:
+   ```bash
+   DATABASE_URL="file:./dev.db"
+   ```
+   (Or `file:./data/dev.db` if you prefer a subdirectory. The ORM creates the file.)
+
+2. **Run migrations** (e.g. Prisma):
+   ```bash
+   npx prisma migrate dev
+   ```
+
+3. The SQLite file is created in the project directory. Do not commit `dev.db` (add to `.gitignore` if needed).
+
+## Environment matrix
+
+- **development**: Use the URLs above (localhost Postgres/MySQL or `file:./dev.db` for SQLite).
+- **staging / production**: Set `DATABASE_URL` (and other vars) per environment. Use your host’s env or secrets; do not commit production URLs.
 
 ## Role
 

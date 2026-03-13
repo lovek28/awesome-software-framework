@@ -22,6 +22,10 @@ cd awesome-software-framework
 node cli.js myapp
 ```
 
+**Commands:**
+
+- `upgrade [path]` — Pull non-destructive template updates into an existing project (CLAUDE.md, workflow.config.json, .claude/instructions.md, docker-compose files, .env.example). Run from the project root or pass the project path. Specs, code, stack.config.json, and workflow state are left unchanged.
+
 **Options:**
 
 - `-v` / `--version` — Print the CLI version and exit.

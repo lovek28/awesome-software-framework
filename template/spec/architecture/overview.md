@@ -1,5 +1,7 @@
 # Architecture Overview
 
+> **Claude:** Before marking architecture done, ensure overview, backend.md, frontend.md, and data-model.md are filled and consistent with domain and stack.
+>
 > High-level structure of the system. Fill after domain, UX, and UI specs are stable.
 
 ## Layers
