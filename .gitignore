@@ -1,5 +1,4 @@
 node_modules/
-.ci-scaffold-smoke-*
 .DS_Store
 *.log
 .env

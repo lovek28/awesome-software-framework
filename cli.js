@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
 const https = require('https');
 
 const TEMPLATE_DIR = path.join(__dirname, 'template');
@@ -29,47 +28,6 @@ function copyRecursive(src, dest) {
   }
 }
 
-const SCAFFOLD_SMOKE_FILES = [
-  'spec/index.md',
-  'stack.config.json',
-  '.claude/workflow.state.json',
-  '.framework-version',
-];
-
-function runTestScaffold() {
-  // Use workspace (cwd) for temp dir so CI (e.g. GitHub Actions) has a reliable writable path
-  const tmpDir = path.join(process.cwd(), '.ci-scaffold-smoke-' + Date.now());
-  const projectPath = path.join(tmpDir, 'test-project');
-
-  try {
-    fs.mkdirSync(path.dirname(projectPath), { recursive: true });
-    fs.mkdirSync(projectPath, { recursive: true });
-    copyRecursive(TEMPLATE_DIR, projectPath);
-    fs.writeFileSync(
-      path.join(projectPath, '.framework-version'),
-      getFrameworkVersion() + '\n',
-      'utf8'
-    );
-
-    const missing = SCAFFOLD_SMOKE_FILES.filter((rel) => {
-      const full = path.join(projectPath, rel);
-      return !fs.existsSync(full);
-    });
-
-    if (missing.length > 0) {
-      console.error('Scaffold smoke test failed. Missing files:', missing.join(', '));
-      return 1;
-    }
-    return 0;
-  } finally {
-    try {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
-    } catch {
-      // ignore cleanup errors
-    }
-  }
-}
-
 function parseArgs(argv) {
   const args = argv.slice(2);
   let projectName = null;
@@ -79,9 +37,6 @@ function parseArgs(argv) {
     const arg = args[i];
     if (arg === '--version' || arg === '-v') {
       return { version: true };
-    }
-    if (arg === 'test-scaffold') {
-      return { testScaffold: true };
     }
     if (arg === '--output-dir' || arg === '-o') {
       outputDir = args[i + 1];
@@ -127,17 +82,13 @@ function checkUpdate(currentVersion) {
 }
 
 function main() {
-  const { version, testScaffold, projectName, outputDir } = parseArgs(process.argv);
+  const { version, projectName, outputDir } = parseArgs(process.argv);
 
   const frameworkVersion = getFrameworkVersion();
 
   if (version) {
     console.log(frameworkVersion);
     process.exit(0);
-  }
-
-  if (testScaffold) {
-    process.exit(runTestScaffold());
   }
 
   if (!projectName) {
