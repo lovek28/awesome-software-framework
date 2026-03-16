@@ -24,6 +24,13 @@ Stages are defined in `workflow.config.json`:
 
 Default pipeline order: **idea** → **product_spec** → **domain_rules** → **ux_flow** → **ui_system** → **architecture** → **api_contract** (optional) → **backend** → **frontend** → **tests** (and any custom stages). When **api_contract** is present, generate `spec/api/openapi.yaml` from backend and data-model; backend and frontend must conform to it.
 
+**Stage skipping based on stack:** After reading `stack.config.json`, automatically skip stages for disabled layers:
+- `frontend: "none"` → skip `ux_flow`, `ui_system`, `frontend`
+- `backend: "none"` → skip `domain_rules`, `backend`, `api_contract`
+- `database: "none"` → skip DB setup steps within the backend stage
+
+When a preset is active (e.g. `api-only`, `frontend-only`), its `stagesInScope` list defines which stages to run — treat all others as skipped.
+
 After completing a stage, update `workflow.state.json`: set `stage` to the next stage and add the completed stage to `completed`.
 
 ## 3. Specification First
@@ -36,9 +43,23 @@ After completing a stage, update `workflow.state.json`: set `stage` to the next 
 
 **Always read `stack.config.json`** before generating code.
 
-**Stack validation:** After writing or updating `stack.config.json`, it must contain at least **frontend**, **backend**, and **database** (and optionally `orm`, `styling`, etc.). If the user skips one, ask again or fill a sensible default for that key only (e.g. "No frontend?" → "I'll set frontend to nextjs unless you prefer something else."). Do not leave required keys missing.
+**Stack validation:** After writing or updating `stack.config.json`, it must contain at least **frontend**, **backend**, and **database**. Each can be set to `"none"` to skip that layer entirely:
 
-If the file is empty (e.g. `{}`), ask the user for tech choices, write them to `stack.config.json` with at least frontend, backend, database, then proceed. Use the defined stack for all implementation. Do not introduce technologies outside this config unless the user explicitly requests it.
+| Key | `"none"` means |
+|-----|----------------|
+| `frontend: "none"` | Skip `ux_flow`, `ui_system`, `frontend` stages. No `packages/ui` or `apps/web`. |
+| `backend: "none"` | Skip `backend`, `api_contract` stages. No `packages/domain`, `packages/services`, `apps/api`. |
+| `database: "none"` | Skip DB setup, migrations, docker-compose. Use only when `backend` is also `"none"` or backend connects to an external API. |
+
+**Valid project shapes:**
+
+| Shape | frontend | backend | database |
+|-------|----------|---------|----------|
+| Full-stack | nextjs / react / vue / etc. | fastify / express / etc. | postgres / mysql / sqlite |
+| API only | `"none"` | fastify / express / etc. | postgres / mysql / sqlite |
+| Frontend only | nextjs / react / etc. | `"none"` | `"none"` |
+
+If the file is empty (e.g. `{}`), ask the user what they're building during `brainstorming`, then write choices to `stack.config.json`. Do not introduce technologies outside this config unless the user explicitly requests it.
 
 ## 5. Token efficiency, context scope, and skills
 
@@ -62,27 +83,26 @@ If the file is empty (e.g. `{}`), ask the user for tech choices, write them to `
 
 Keep domain logic in `packages/domain`, application services in `packages/services`, and follow the layered architecture described in `spec/architecture/`.
 
-## 8. Chat-First Development — Ask the user for choices
+## 8. Agent Workflow (Superpowers)
 
-The user interacts via prompts. When they say things like "Build a marketplace for freelancers" or "Build a CRM system":
+This project is designed to work with **[Superpowers](https://github.com/obra/superpowers)** — a set of skills that give Claude structured, disciplined development habits.
 
-1. **Read workflow state** and start from the idea stage (or the next incomplete stage).
-2. **Before writing specs or code, ask the user all relevant questions** so you can fill `stack.config.json` and proceed correctly. Do **not** assume the stack; the CLI does not collect it — you must.
-3. **Tech stack questions** — Ask in chat (one message or a short list is fine):
-   - **Frontend**: e.g. Next.js, Remix, React (Vite), Vue, Svelte, or other. Accept any answer.
-   - **Backend**: e.g. Fastify, Express, NestJS, Hono, or other. Accept any answer.
-   - **Database**: e.g. PostgreSQL, MySQL, SQLite, or other. Accept any answer.
-   - **ORM / data layer**: e.g. Prisma, Drizzle, TypeORM, Knex, or "none" / raw SQL. Accept any answer.
-   - **Styling**: e.g. Tailwind CSS, CSS Modules, styled-components, or other. Accept any answer.
-   - **Auth** (optional): e.g. `none`, `jwt`, `nextauth`, `clerk`, or other. If chosen, optionally **auth_provider** (e.g. `github`, `google`) for OAuth. Write to `stack.config.json` as `auth` and `auth_provider`. Generate middleware, env vars, and login/signup flows in backend and frontend accordingly.
-   - **Deploy** (optional): e.g. `none`, `vercel`, `docker`, `fly`, `railway`, or other. Write as `deploy` in `stack.config.json`. When not `none`, add a **deploy_config** stage (or output in infra): generate deployment config (e.g. `vercel.json`, Dockerfile, `fly.toml`) and document deploy steps in `infra/README.md`.
-   - **Multi-app** (optional): If the user wants an admin UI or mobile app, add `frontend_admin` (e.g. `"nextjs"`) or `mobile` (e.g. `"expo"`) to `stack.config.json`. Template has `apps/admin` and `apps/mobile`; run frontend stage for each app and share API/domain. Optionally add `spec/ux/flows-admin.md` for admin-only flows.
-   There is no default stack in the repo — you decide with the user. Write the user's choices to `stack.config.json` (use the keys: `frontend`, `backend`, `database`, `orm`, `styling`, and optionally `auth`, `auth_provider`, `deploy`, `frontend_admin`, `mobile`).
-4. **Presets:** If the user’s request matches a preset (e.g. "CRUD app for X", "dashboard with login", "API only"), read `template/.presets/*.json` (or project’s `project.preset.json`). Apply the preset’s suggested stack and product snippet, then ask only for the specific details (e.g. resource name and fields for CRUD).
-5. **Other relevant questions** — Depending on the idea, ask about: target users, must-have features, constraints, or preferences. Use answers to fill `spec/product/spec.md` and the rest of the pipeline.
-6. Then execute the pipeline in order and implement according to the spec and architecture.
+Before writing any spec or code, use the Superpowers skills in this order:
 
-Do not jump to code. Always advance through the pipeline deterministically. The user can give any technology names; you are not limited to a fixed list.
+| When | Use skill |
+|------|-----------|
+| User describes what to build | `brainstorming` — ask questions one at a time, surface constraints, get approval |
+| Ready to plan a stage | `writing-plans` — write an implementation plan before touching files |
+| Executing a plan | `executing-plans` — follow the plan step by step via subagents |
+| Stage complete | `requesting-code-review` — review before advancing to next stage |
+
+**Stack collection:** During `brainstorming`, collect these choices from the user and write them to `stack.config.json`:
+- `frontend`, `backend`, `database`, `orm`, `styling`
+- Optional: `auth`, `auth_provider`, `deploy`, `frontend_admin`, `mobile`
+
+**Presets:** If the request matches "CRUD app for X", "dashboard with login", or "API only", apply the matching preset from `.presets/` — ask only for the missing specifics.
+
+Do not write specs or code until brainstorming is complete and the user has approved the direction. Always advance through the pipeline deterministically.
 
 ## 9. Local database (backend stage)
 

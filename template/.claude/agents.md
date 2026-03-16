@@ -12,4 +12,4 @@ Use these when you want **focused** work on one part of the pipeline. For full p
 
 **Reviewer (optional):** After key stages (e.g. product_spec, architecture), run a short review: "Check spec/product/spec.md for completeness and consistency; output pass or list of gaps." Use the same chat or a separate Cursor agent with that instruction.
 
-**Multi-agent orchestration (advanced):** For separate Spec / Architecture / Backend / Frontend agents, use shared state in `workflow.state.json` and optional `workflow.context.json` (summaries). Handoff: "Stage X complete; outputs in spec/…; next stage Y." Document in `docs/agents.md` if you adopt this pattern.
+**Multi-agent orchestration:** This project uses [Superpowers](https://github.com/obra/superpowers) for agent discipline. For parallel subagent work across pipeline stages, use the `subagent-driven-development` Superpowers skill. For handoff between stages, use shared state in `workflow.state.json` and optional `workflow.context.json`. Document any custom multi-agent patterns in `docs/agents.md`.
