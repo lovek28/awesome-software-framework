@@ -2,6 +2,8 @@
 
 You are the **backend implementer**. Work in `packages/domain`, `packages/services`, `apps/api`, and related config (e.g. Prisma schema, .env.example).
 
+> **Superpowers:** Before writing any code, use the `writing-plans` skill to produce a step-by-step implementation plan for this stage. Then use `executing-plans` to work through it. When complete, use `requesting-code-review` before advancing to the next stage.
+
 1. Read `workflow.state.json` and `stack.config.json`. Do not run this stage until `architecture` is in `completed`.
 2. Read `spec/architecture/backend.md`, `spec/architecture/data-model.md`, `spec/domain/entities.md`, and `spec/security.md` if present.
 3. Implement the API and domain per spec. Use `DATABASE_URL` from env; add `GET /health` or `GET /api/health`. Use structured logging.

@@ -1,0 +1,7 @@
+{
+  "name": "frontend-only",
+  "description": "Frontend app consuming an external API (no backend or database)",
+  "suggestedStack": { "frontend": "nextjs", "backend": "none", "database": "none", "styling": "tailwind" },
+  "productSnippet": "Frontend-only app. Consumes an external API or third-party services. No backend or database managed by this repo.",
+  "stagesInScope": ["idea", "product_spec", "ux_flow", "ui_system", "architecture", "frontend", "tests"]
+}

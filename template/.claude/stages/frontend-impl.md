@@ -2,6 +2,8 @@
 
 You are the **frontend implementer**. Work in `packages/ui`, `apps/web` (and optionally `apps/admin`, `apps/mobile` if in stack).
 
+> **Superpowers:** Before writing any code, use the `writing-plans` skill to produce a step-by-step implementation plan for this stage. Then use `executing-plans` to work through it. When complete, use `requesting-code-review` before advancing to the next stage.
+
 1. Read `workflow.state.json` and `stack.config.json`. Do not run this stage until `architecture` is in `completed`.
 2. Read `spec/architecture/frontend.md`, `spec/ux/flows.md`, `spec/ui/system.md`, and `spec/api/openapi.yaml` if present.
 3. Implement the UI per spec and stack. Consume the API per contract. Do not edit backend or spec files.

@@ -191,11 +191,20 @@ function main() {
   checkUpdate(frameworkVersion);
 
   console.log('');
-  console.log('Project created: ' + projectName);
+  console.log('✓ Project created: ' + projectName);
   console.log('');
   console.log('  cd ' + (outputDir === process.cwd() ? projectName : targetPath));
   console.log('  Open the project in Cursor (or VS Code) and tell Claude what to build.');
   console.log('  Claude will ask you for tech stack and other choices, then run the pipeline.');
+  console.log('');
+  console.log('─────────────────────────────────────────────────────────────────');
+  console.log('  Tip: This framework works best with Superpowers installed.');
+  console.log('  Superpowers teaches Claude to brainstorm, plan, and review');
+  console.log('  before writing any code — complementing this framework\'s pipeline.');
+  console.log('');
+  console.log('  Install once (global):');
+  console.log('    npx github:obra/superpowers');
+  console.log('─────────────────────────────────────────────────────────────────');
   console.log('');
 }
 

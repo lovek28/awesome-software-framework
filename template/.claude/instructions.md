@@ -30,3 +30,8 @@ This directory holds the workflow state machine for Specification-First Developm
 4. After completing a stage, update the state file: append the completed stage to `completed` and set `stage` to the next stage in the pipeline.
 5. For custom stages in `pipeline`, execute them in order; if a stage has no built-in meaning, use the `stages` description or project convention.
 6. **Quality gates:** Before advancing past **product_spec**, ensure `spec/product/spec.md` has Problem, Target Users, at least one Core Feature, and at least one Functional Requirement; if not, ask the user to fill gaps. Before **backend**, optionally check that `spec/architecture/backend.md` references entities from domain and data-model; if missing, ask for alignment.
+7. **Stage skipping based on stack:** After reading `stack.config.json`, skip stages for any layer set to `"none"`:
+   - `frontend: "none"` → skip `ux_flow`, `ui_system`, `frontend` stages
+   - `backend: "none"` → skip `domain_rules`, `backend`, `api_contract` stages
+   - `database: "none"` → skip DB setup, migrations, and docker-compose steps within backend
+   When a preset is active, its `stagesInScope` list is authoritative — run only those stages.
