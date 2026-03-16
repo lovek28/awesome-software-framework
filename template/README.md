@@ -18,7 +18,9 @@ Or from anywhere: `npx create-awesome-software upgrade /path/to/this/project`
    - "Build a marketplace for freelancers"
    - "Build a CRM system"
 3. Claude will **ask you** for tech stack (frontend, backend, database, ORM, styling) and any other relevant questions, then write choices to `stack.config.json`.
-4. Claude then runs the pipeline: idea → product spec → domain → UX → UI system → architecture → backend → frontend → tests.
+4. Claude then runs the pipeline: idea → product spec → domain → UX → UI system → architecture → [API contract] → backend → frontend → tests → [docs].
+
+   Stages in `[]` are optional. If `frontend` or `backend` is set to `"none"` in `stack.config.json`, Claude skips the stages for that layer automatically.
 
 ## Local database setup (before running the backend)
 
@@ -52,14 +54,16 @@ See **infra/README.md** for MySQL/SQLite and more detail.
 
 ## Pipeline
 
-1. Idea  
-2. Product Specification  
-3. Domain Design  
-4. UX Flows  
-5. UI System  
-6. System Architecture  
-7. Backend Implementation  
-8. Frontend Implementation  
-9. Testing  
+1. Idea
+2. Product Specification
+3. Domain Design
+4. UX Flows
+5. UI System
+6. System Architecture
+7. API Contract *(optional)*
+8. Backend Implementation
+9. Frontend Implementation
+10. Testing *(optional)*
+11. Docs *(optional)*
 
-Do not skip stages. Do not generate backend, frontend, or tests until the architecture stage is complete.
+Do not skip required stages. Do not generate backend, frontend, or tests until the architecture stage is complete. Stages are skipped automatically when `frontend: "none"` or `backend: "none"` is set in `stack.config.json`.
