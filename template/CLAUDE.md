@@ -87,7 +87,23 @@ Keep domain logic in `packages/domain`, application services in `packages/servic
 
 This project is designed to work with **[Superpowers](https://github.com/obra/superpowers)** — a set of skills that give Claude structured, disciplined development habits.
 
-Before writing any spec or code, use the Superpowers skills in this order:
+**Superpowers installation check (run once at project start):**
+
+At the very start of a new project (when `workflow.state.json` has `stage: "idea"` and `completed: []`), check if Superpowers is installed by looking for `~/.claude/skills/brainstorming.md`.
+
+- **If found:** Use the Superpowers skills as described below.
+- **If NOT found:** Tell the user:
+
+  > "This framework works best with **Superpowers** — it gives Claude structured brainstorming, planning, and code review habits.
+  > Install it with:
+  > ```
+  > npx github:obra/superpowers
+  > ```
+  > Without it, I'll proceed using built-in brainstorming. Would you like to install it first, or continue without it?"
+
+  Wait for their answer before proceeding.
+
+**Superpowers skills to use (when installed):**
 
 | When | Use skill |
 |------|-----------|
@@ -96,13 +112,24 @@ Before writing any spec or code, use the Superpowers skills in this order:
 | Executing a plan | `executing-plans` — follow the plan step by step via subagents |
 | Stage complete | `requesting-code-review` — review before advancing to next stage |
 
-**Stack collection:** During `brainstorming`, collect these choices from the user and write them to `stack.config.json`:
-- `frontend`, `backend`, `database`, `orm`, `styling`
-- Optional: `auth`, `auth_provider`, `deploy`, `frontend_admin`, `mobile`
+**Stack collection (always required — with or without Superpowers):**
 
-**Presets:** If the request matches "CRUD app for X", "dashboard with login", or "API only", apply the matching preset from `.presets/` — ask only for the missing specifics.
+At the `idea` stage, if `stack.config.json` is empty (`{}`), you **must** ask the user these questions one at a time before doing anything else:
 
-Do not write specs or code until brainstorming is complete and the user has approved the direction. Always advance through the pipeline deterministically.
+1. "What are you building?" (brief description)
+2. "Do you need a frontend, backend, or both?" (shapes the project — full-stack / API only / frontend only)
+3. "What frontend framework?" (Next.js / React / Vue / none)
+4. "What backend runtime/framework?" (Fastify / Express / none)
+5. "What database?" (PostgreSQL / MySQL / SQLite / none)
+6. "ORM preference?" (Prisma / Drizzle / TypeORM / none)
+7. "Styling?" (Tailwind / CSS Modules / none)
+8. Optional: auth, deploy target, admin panel, mobile app
+
+Once answered, write all choices to `stack.config.json` immediately.
+
+**Presets:** If the request clearly matches "CRUD app", "dashboard with login", or "API only", apply the matching preset from `.presets/` — ask only for the missing specifics. Still confirm stack with the user before writing specs.
+
+Do not write specs or code until stack is confirmed and the user has approved the direction. Always advance through the pipeline deterministically.
 
 ## 9. Local database (backend stage)
 
