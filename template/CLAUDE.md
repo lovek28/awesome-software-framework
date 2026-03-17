@@ -2,6 +2,26 @@
 
 You are working inside a **Specification-First** repository. Follow these rules strictly.
 
+## 0. First-Run Check (Run Before Anything Else)
+
+**Before reading workflow state, before running any pipeline stage, do this once:**
+
+1. Check if `~/.claude/skills/brainstorming.md` exists.
+2. **If it does NOT exist**, stop and tell the user:
+
+   > "This framework works best with **Superpowers** — it gives Claude structured brainstorming, planning, and code review habits.
+   > Install it with:
+   > ```
+   > npx github:obra/superpowers
+   > ```
+   > Without it I'll use built-in brainstorming. Install Superpowers first, or continue without it?"
+
+   Wait for their answer. If they say install first — stop. If they say continue — proceed to Section 1.
+
+3. **If it exists**, proceed to Section 1.
+
+---
+
 ## 1. Workflow State (Required)
 
 **Always read `.claude/workflow.state.json`** before generating any content. It defines:
