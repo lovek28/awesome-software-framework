@@ -38,28 +38,19 @@ Scaffold a repo where Claude follows a clear pipeline: idea → specs → archit
 This framework is designed to work hand-in-hand with **[Superpowers](https://github.com/obra/superpowers)** — a set of skills that give Claude structured, disciplined development habits.
 
 > **Superpowers** teaches Claude *how to think and work*.
-> **Awesome Software Framework** gives Claude *what to build toward, where to put it, and enforces it can't skip steps*.
+> **Awesome Software Framework** gives Claude *a spec-first project to work within, with enforced pipeline gates so nothing gets skipped*.
 
-| Need | Superpowers alone | This framework |
-|------|:-----------------:|:--------------:|
-| Disciplined planning before coding | ✓ | ✓ (via Superpowers) |
-| Spec directory layout | ✗ | ✓ |
-| Tech stack config | ✗ | ✓ |
-| Pipeline state tracking | ✗ | ✓ |
-| Hook-enforced quality gates | ✗ | ✓ |
-| Justified architecture decisions | ✗ | ✓ |
-| User checkpoint at every stage | ✗ | ✓ |
-| Pre-code reasoning gate (written artifact) | ✗ | ✓ |
-| Hardcoded secret detection | ✗ | ✓ |
-| Tests required before stage completion | ✗ | ✓ |
-| Monorepo scaffold | ✗ | ✓ |
-| Three project shapes | ✗ | ✓ |
-| Presets | ✗ | ✓ |
-| Pull framework updates | ✗ | ✓ |
+They are designed to be used together. Superpowers handles how Claude plans, executes, and reviews. This framework handles where everything goes, what order it happens in, and enforces that order with hooks.
 
-**Use Superpowers** if you want a smarter Claude on any existing project.
-**Use this framework** if you are starting a new app and want spec-first structure, enforced pipeline, and a monorepo layout from day one.
-**Use both** for the best experience.
+| What Superpowers contributes | What this framework contributes |
+|------------------------------|--------------------------------|
+| Structured brainstorming before any spec | Spec directory layout (`spec/product/`, `spec/domain/`, `spec/ux/`) |
+| Step-by-step plan before touching files | Tech stack config (`stack.config.json`) |
+| Subagent-driven execution | Pipeline state tracking (`workflow.state.json`) |
+| Code review before advancing | Hook-enforced quality gates (7 hooks, 9 rules) |
+| Disciplined development habits | Monorepo scaffold (`apps/`, `packages/`, `tests/`, `infra/`) |
+
+Install Superpowers once globally, then use this framework for every new app you start.
 
 ---
 
