@@ -1,7 +1,33 @@
 {
   "name": "crud",
-  "description": "CRUD app for a single resource",
-  "suggestedStack": { "frontend": "nextjs", "backend": "fastify", "database": "postgres", "orm": "prisma", "styling": "tailwind" },
+  "description": "Full-stack CRUD app for a single resource or small set of resources",
+  "suggestedStack": {
+    "frontend": "nextjs",
+    "backend": "fastify",
+    "database": "postgres",
+    "orm": "prisma",
+    "styling": "tailwind"
+  },
   "productSnippet": "CRUD for resource: create, list, read, update, delete. Single main entity with standard REST API and simple UI.",
-  "stagesInScope": ["idea", "product_spec", "domain_rules", "ux_flow", "ui_system", "architecture", "backend", "frontend", "tests"]
+  "stagesInScope": ["idea", "product_spec", "domain_rules", "ux_flow", "ui_system", "architecture", "backend", "frontend", "tests"],
+  "architectureHints": {
+    "systemStyle": "Modular Monolith — single deployable, clear internal layers",
+    "codeOrganisation": "Layered: routes → services → domain → DB",
+    "dataPattern": "Repository via Prisma — one service per resource",
+    "apiStyle": "REST with standard CRUD endpoints",
+    "frontendState": "Local state + server components — no global state needed for simple CRUD",
+    "errorStrategy": "Zod validation at route, domain errors mapped to HTTP codes"
+  },
+  "commonPatterns": [
+    "List page with search and filter",
+    "Create/edit form with validation",
+    "Confirm-before-delete dialog",
+    "Optimistic UI updates on mutations",
+    "Pagination on list endpoint"
+  ],
+  "quickStartPrompts": [
+    "Build a CRUD app for managing inventory items",
+    "Build an admin panel for managing blog posts",
+    "Build a contact management tool"
+  ]
 }
