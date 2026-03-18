@@ -59,6 +59,182 @@ After completing a stage, update `workflow.state.json`: set `stage` to the next 
 - Update specification files (product, domain, ux, ui, architecture) before generating application code.
 - After significant spec changes, update `spec/index.md` to summarize the system.
 
+## 3a. Architecture & Design Decision Protocol
+
+**Before writing any architecture spec or implementation code**, Claude must reason through the following — do not pick patterns randomly or default to what was last used.
+
+### Step 1 — Analyse the project context
+Read all completed specs (`spec/product/`, `spec/domain/`, `spec/ux/`) and answer internally:
+- What is the scale? (personal tool / startup / enterprise)
+- How complex is the data model? (few entities / relational / graph)
+- Are there real-time requirements? (live updates, websockets, polling)
+- What are the read/write patterns? (read-heavy, write-heavy, balanced)
+- Does the domain have clear bounded contexts that warrant separation?
+- What is the implied team size and deployment target?
+
+### Step 2 — Decide and justify each dimension
+
+| Dimension | Options to consider | Decision trigger |
+|---|---|---|
+| **System architecture** | Monolith, Modular Monolith, Microservices, Serverless | Use monolith unless domain complexity and team size clearly justify more |
+| **Code organisation** | Layered (MVC), Hexagonal/Ports-Adapters, Feature-sliced | Use layered for most apps; hexagonal when domain logic is complex and testability is critical |
+| **Data access pattern** | Active Record, Repository, CQRS | Repository for business logic; CQRS only when read/write models differ significantly |
+| **State management (frontend)** | Local state, Context, Zustand, Redux | Match complexity — do not add Redux to a simple CRUD app |
+| **API style** | REST, GraphQL, tRPC | REST unless the client needs flexible query composition; tRPC for full-stack TypeScript |
+| **Error strategy** | Result types, exceptions, error boundaries | Consistent within each layer — document the chosen approach |
+
+### Step 3 — Present decisions to the user
+
+Before writing `spec/architecture/`, present a short decision summary:
+
+```
+Architecture decisions for [project name]:
+- System: Modular Monolith (reason: single team, low microservice overhead)
+- Layers: Hexagonal (reason: domain has complex rules, needs testable core)
+- Data: Repository pattern + Prisma (reason: clean separation from ORM)
+- API: REST with OpenAPI contract (reason: standard, well-tooled)
+- Frontend state: Zustand (reason: moderate complexity, no prop-drilling needed)
+- Error handling: Result types in domain, thrown errors at API boundary
+
+Shall I proceed with this architecture, or would you like to change anything?
+```
+
+Wait for approval. If the user approves, **write the gate file first** before writing any architecture spec:
+
+Write `.claude/gates/architecture-decisions.md`:
+```markdown
+# Architecture decisions
+## Analysis
+[Your reasoning about scale, complexity, real-time needs, team size]
+## Decisions
+- System: Modular Monolith (reason: single team, no microservice overhead)
+- Layers: Hexagonal (reason: complex domain rules, testable core needed)
+- Data: Repository + Prisma (reason: clean ORM separation)
+- API: REST + OpenAPI (reason: standard, well-tooled)
+- State: Zustand (reason: moderate complexity)
+- Errors: Result types in domain, HTTP errors at API boundary
+## User approval
+Approved: yes
+```
+
+**This is enforced by a hook.** `.claude/hooks/check-architecture-decisions-gate.js` blocks any write to `spec/architecture/` (except `decisions.md` itself) unless `.claude/gates/architecture-decisions.md` exists.
+
+---
+
+## 3b. User Checkpoint Protocol
+
+**At every pipeline stage boundary**, Claude must pause and check in — unless the user has explicitly said "build autonomously" or "don't ask at each stage".
+
+### Checkpoint format (required at each stage transition)
+
+```
+✓ Completed: [stage name]
+  → [1-2 sentence summary of what was produced]
+
+Next: [next stage name]
+  → [1-2 sentence preview of what will happen]
+
+Ready to proceed? (yes / adjust first / skip this stage)
+```
+
+### Mandatory checkpoints (never skip these)
+
+| After stage | Why it matters |
+|---|---|
+| `product_spec` | User must confirm the problem and features are correct before domain work starts |
+| `architecture` | User must approve architecture decisions (see Section 3a) before any code is written |
+| `backend` | User should validate API shape before frontend is built against it |
+| `tests` | User should confirm test coverage is acceptable before calling the project done |
+
+### Checkpoint artifact (enforced by hook)
+
+Before updating `workflow.state.json` to mark a stage as completed, write `.claude/gates/checkpoint-<stage>.md`:
+
+```markdown
+# Checkpoint: product_spec
+## Completed
+Defined problem (teams losing track of tasks), target users (small teams 2-20),
+and 4 core features including task CRUD, assignees, deadlines, team workspaces.
+## Next stage
+domain_rules — define business rules, domain entities, and validation logic.
+## User response
+yes
+```
+
+**This is enforced by a hook.** `.claude/hooks/check-stage-advance-gate.js` blocks any update to `workflow.state.json` that advances the pipeline unless the checkpoint file for that stage exists. For the 4 mandatory stages (`product_spec`, `architecture`, `backend`, `tests`), it also checks the file contains a `## User response` section.
+
+### Autonomous mode
+
+If the user says "build it all" / "proceed autonomously" / "don't ask at each step", skip stage-transition checkpoints but still pause at the **mandatory checkpoints** above and still run the pre-code reasoning gate (Section 3c).
+
+---
+
+## 3c. Pre-Code Reasoning Gate
+
+**Before writing any implementation code** (route handlers, services, domain logic, UI components, hooks), you must write a reasoning gate file first. This is enforced by a hook — the hook will block any write to `apps/` or `packages/` unless the gate file exists.
+
+### Step 1 — Write the gate file first
+
+At the start of each implementation stage, write `.claude/gates/<stage>-gate.md` before touching any code file. The hook checks this file exists.
+
+Example for the `backend` stage — write `.claude/gates/backend-gate.md`:
+
+```markdown
+# Backend stage — pre-code reasoning gate
+
+## Batch: Task routes (POST /tasks, GET /tasks, GET /tasks/:id, PATCH /tasks/:id, DELETE /tasks/:id)
+
+### 1. Purpose
+Implement CRUD task management scoped to team workspaces with JWT auth.
+
+### 2. Edge cases
+- Assignee not a member of the team
+- Deadline set in the past
+- Title empty or over 255 chars
+- Team does not exist
+
+### 3. Error conditions
+- DB insert fails → 500 with structured error, no stack trace to client
+- Invalid assignee ID → 404
+- Missing required fields → 422 with field-level errors
+- Unauthenticated request → 401 before any DB query
+- Assignee not in team → 403 before DB write
+
+### 4. Security
+- Zod schema validation on all inputs
+- JWT team membership verified before any DB write
+- Prisma parameterised queries only — no raw SQL
+- No sensitive data in error responses
+
+### 5. Performance
+- Single DB write per request — no N+1 risk on create
+- List query uses include for assignee — no N+1
+- Team membership check in same transaction as insert
+
+### 6. Flow correctness
+Happy path: auth check → validate input → check assignee in team → insert → 201
+Failure: assignee not in team → 403 returned before any DB write
+Failure: invalid input → 422 returned before any DB query
+```
+
+### Step 2 — Write the code
+
+Only after the gate file is written, write implementation files. The gate file covers the whole stage — you do not need a separate file per function.
+
+### Step 3 — Flag uncertainty
+
+If any of the six points cannot be answered confidently, stop and ask the user before writing code. Do not guess.
+
+### Why this is enforced by a hook
+
+`.claude/hooks/check-implementation-gate.js` runs before every Write/Edit to `apps/` or `packages/`. It checks:
+1. `architecture` is in `workflow.state.json` completed list
+2. `.claude/gates/<current-stage>-gate.md` exists
+
+If either check fails, the hook exits with code 2 and blocks the write. Claude sees the error message and cannot proceed until the gate is satisfied.
+
+---
+
 ## 4. Stack Configuration
 
 **Always read `stack.config.json`** before generating code.
@@ -86,7 +262,25 @@ If the file is empty (e.g. `{}`), ask the user what they're building during `bra
 - **Context scope:** Read only files needed for the current stage. See `.claude/context-scope.md` for a per-stage list of what to read and what to avoid; follow priority and incremental-read guidance when context is tight.
 - For implementation stages, prefer reading the relevant spec and architecture files plus the target package/app, not the entire repo. Work in small scopes (e.g. one route or package at a time) on large apps.
 - **Summaries (optional):** After a stage, you may write a short summary to `workflow.context.json` or `.claude/summaries/<stage>.md` (key decisions, files changed) so later stages can use it instead of re-reading all prior outputs.
-- **Skills:** Apply reusable know-how from `.claude/skills/`. When backend is Fastify, use `fastify` and `prisma` (if orm is Prisma); when frontend is Next.js, use `nextjs`. For product_spec stage use `product-spec`; for architecture/api_contract use `api-design`. See `.claude/skills/README.md` for the full list and when they apply.
+- **Skills:** Apply reusable know-how from `.claude/skills/`. Read `stack.config.json` and load the matching skill for each technology chosen:
+
+  | Technology | Skill file |
+  |------------|------------|
+  | `backend: "fastify"` | `fastify.md` |
+  | `backend: "express"` | `express.md` |
+  | `frontend: "nextjs"` | `nextjs.md` |
+  | `frontend: "react"` | `react.md` |
+  | `frontend: "vue"` or `"nuxt"` | `vue.md` |
+  | `orm: "prisma"` | `prisma.md` |
+  | `orm: "drizzle"` | `drizzle.md` |
+  | Stage: `product_spec` | `product-spec.md` |
+  | Stage: `architecture` or `api_contract` | `api-design.md` |
+
+  **No matching skill?** If the user chose a technology not listed above (e.g. NestJS, Hono, SvelteKit, TypeORM), do the following:
+  1. Tell the user: "No built-in skill exists for `[technology]`. I'll apply the general principles from `api-design.md` and the pre-code reasoning gate. You can add a custom skill at `.claude/skills/[name].md` to override this — see `.claude/skills/README.md` for the format."
+  2. Apply `api-design.md` (for backend) or general frontend patterns from the spec.
+  3. Apply Section 3c (pre-code reasoning gate) as normal — the six questions still apply regardless of stack.
+  4. State clearly in each response which technology conventions you are following so the user can correct you.
 
 ## 6. Security and secrets
 
@@ -125,12 +319,22 @@ At the very start of a new project (when `workflow.state.json` has `stage: "idea
 
 **Superpowers skills to use (when installed):**
 
-| When | Use skill |
-|------|-----------|
-| User describes what to build | `brainstorming` — ask questions one at a time, surface constraints, get approval |
-| Ready to plan a stage | `writing-plans` — write an implementation plan before touching files |
-| Executing a plan | `executing-plans` — follow the plan step by step via subagents |
-| Stage complete | `requesting-code-review` — review before advancing to next stage |
+**Always ask for approval before activating any Superpowers skill.** Use this format:
+
+```
+I'd like to activate the Superpowers `[skill-name]` skill now.
+It will: [one sentence — what it does and why it's useful here].
+Shall I proceed? (yes / skip / tell me more)
+```
+
+Only activate the skill after the user confirms. If they say skip, proceed with built-in behaviour and note that the skill was skipped.
+
+| When | Skill to request approval for |
+|------|-------------------------------|
+| User describes what to build | `brainstorming` — structured questions one at a time, surfaces constraints, gets approval before specs |
+| Ready to plan a stage | `writing-plans` — writes a step-by-step implementation plan before touching any files |
+| Executing a plan | `executing-plans` — follows the plan via subagents, one step at a time |
+| Stage complete | `requesting-code-review` — reviews all changes before advancing to the next stage |
 
 **Stack collection (always required — with or without Superpowers):**
 

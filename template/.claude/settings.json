@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-stack-config-gate.js",
+            "description": "Section 4: Validate stack.config.json has required frontend, backend, database keys"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-spec-gate.js",
+            "description": "Section 2: Block spec files from being written out of pipeline order"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-architecture-decisions-gate.js",
+            "description": "Section 3a: Block architecture specs before decisions are reasoned, written, and user-approved"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-stage-advance-gate.js",
+            "description": "Section 3b: Block workflow.state.json stage advance before checkpoint is written and user responds"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-implementation-gate.js",
+            "description": "Section 3c: Block implementation code before architecture completed and reasoning gate written"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-security-gate.js",
+            "description": "Section 6: Block implementation before spec/security.md exists; scan for hardcoded secrets"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-tests-gate.js",
+            "description": "Section 11: Block marking tests complete before actual test files exist"
+          }
+        ]
+      }
+    ]
+  }
+}

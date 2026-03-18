@@ -1,7 +1,33 @@
 {
   "name": "api-only",
-  "description": "REST API only, no web UI",
-  "suggestedStack": { "frontend": "none", "backend": "fastify", "database": "postgres", "orm": "prisma" },
-  "productSnippet": "REST API: resources and endpoints per domain. No frontend; API is consumed by other clients. Document OpenAPI.",
-  "stagesInScope": ["idea", "product_spec", "domain_rules", "architecture", "api_contract", "backend", "tests"]
+  "description": "REST API only — no web UI, consumed by external clients",
+  "suggestedStack": {
+    "frontend": "none",
+    "backend": "fastify",
+    "database": "postgres",
+    "orm": "prisma"
+  },
+  "productSnippet": "REST API: resources and endpoints per domain. No frontend; API is consumed by other clients. Document with OpenAPI.",
+  "stagesInScope": ["idea", "product_spec", "domain_rules", "architecture", "api_contract", "backend", "tests"],
+  "architectureHints": {
+    "systemStyle": "Modular Monolith — resource modules with clear boundaries",
+    "codeOrganisation": "Layered: routes → services → domain → Prisma. Group by resource, not by layer.",
+    "dataPattern": "Repository pattern — one service class per resource",
+    "apiStyle": "REST + OpenAPI contract. Generate spec/api/openapi.yaml before writing code.",
+    "frontendState": "N/A — no frontend",
+    "errorStrategy": "Consistent error envelope: { code, message, details }. Document all 4xx/5xx."
+  },
+  "commonPatterns": [
+    "OpenAPI-first: write spec/api/openapi.yaml before backend code",
+    "Cursor-based pagination for large datasets",
+    "API key or JWT auth depending on consumer type",
+    "Health check endpoint at GET /health",
+    "Structured logging with request ID",
+    "Rate limiting on public endpoints"
+  ],
+  "quickStartPrompts": [
+    "Build a REST API for a booking system, no UI",
+    "Build an API for a mobile app — no web frontend",
+    "Build a webhook processing API"
+  ]
 }

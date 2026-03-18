@@ -1,7 +1,43 @@
 {
   "name": "auth-dashboard",
-  "description": "App with auth and dashboard",
-  "suggestedStack": { "frontend": "nextjs", "backend": "fastify", "database": "postgres", "orm": "prisma", "styling": "tailwind", "auth": "nextauth", "auth_provider": "github" },
-  "productSnippet": "Authenticated dashboard: sign-in (e.g. GitHub), protected dashboard, user-scoped data. Core features: auth, dashboard layout, at least one data view.",
-  "stagesInScope": ["idea", "product_spec", "domain_rules", "ux_flow", "ui_system", "architecture", "backend", "frontend", "tests"]
+  "description": "Full-stack app with authentication and a protected dashboard",
+  "suggestedStack": {
+    "frontend": "nextjs",
+    "backend": "fastify",
+    "database": "postgres",
+    "orm": "prisma",
+    "styling": "tailwind",
+    "auth": "jwt",
+    "auth_provider": "email+password"
+  },
+  "productSnippet": "Authenticated dashboard: sign-in, protected dashboard, user-scoped data. Core features: auth, dashboard layout, at least one data view.",
+  "stagesInScope": ["idea", "product_spec", "domain_rules", "ux_flow", "ui_system", "architecture", "backend", "frontend", "tests"],
+  "architectureHints": {
+    "systemStyle": "Modular Monolith — auth and feature domains as separate modules",
+    "codeOrganisation": "Layered with clear auth boundary: public routes vs protected routes",
+    "dataPattern": "Repository pattern — UserRepository, plus one repo per feature domain",
+    "apiStyle": "REST — /auth/* for auth flows, /api/v1/* for feature endpoints",
+    "frontendState": "Server components for data, Zustand or Context for UI state (sidebar, theme)",
+    "errorStrategy": "JWT validation middleware, 401 for missing token, 403 for insufficient role"
+  },
+  "commonPatterns": [
+    "Email + password registration and login",
+    "JWT access token + refresh token rotation",
+    "Protected route layout group in Next.js App Router",
+    "Role-based access (admin vs member)",
+    "User profile and settings page",
+    "Session-aware navigation"
+  ],
+  "securityNotes": [
+    "Hash passwords with bcrypt (cost factor 12+)",
+    "Store JWT secret in env — never in code",
+    "Set httpOnly + Secure + SameSite=Strict on auth cookies",
+    "Refresh tokens must be rotated on every use",
+    "Rate-limit login and register endpoints"
+  ],
+  "quickStartPrompts": [
+    "Build a dashboard with login for managing team tasks",
+    "Build a SaaS app with email login and a user dashboard",
+    "Build an internal tool with role-based access"
+  ]
 }
