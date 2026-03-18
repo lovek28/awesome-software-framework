@@ -59,6 +59,111 @@ After completing a stage, update `workflow.state.json`: set `stage` to the next 
 - Update specification files (product, domain, ux, ui, architecture) before generating application code.
 - After significant spec changes, update `spec/index.md` to summarize the system.
 
+## 3a. Architecture & Design Decision Protocol
+
+**Before writing any architecture spec or implementation code**, Claude must reason through the following — do not pick patterns randomly or default to what was last used.
+
+### Step 1 — Analyse the project context
+Read all completed specs (`spec/product/`, `spec/domain/`, `spec/ux/`) and answer internally:
+- What is the scale? (personal tool / startup / enterprise)
+- How complex is the data model? (few entities / relational / graph)
+- Are there real-time requirements? (live updates, websockets, polling)
+- What are the read/write patterns? (read-heavy, write-heavy, balanced)
+- Does the domain have clear bounded contexts that warrant separation?
+- What is the implied team size and deployment target?
+
+### Step 2 — Decide and justify each dimension
+
+| Dimension | Options to consider | Decision trigger |
+|---|---|---|
+| **System architecture** | Monolith, Modular Monolith, Microservices, Serverless | Use monolith unless domain complexity and team size clearly justify more |
+| **Code organisation** | Layered (MVC), Hexagonal/Ports-Adapters, Feature-sliced | Use layered for most apps; hexagonal when domain logic is complex and testability is critical |
+| **Data access pattern** | Active Record, Repository, CQRS | Repository for business logic; CQRS only when read/write models differ significantly |
+| **State management (frontend)** | Local state, Context, Zustand, Redux | Match complexity — do not add Redux to a simple CRUD app |
+| **API style** | REST, GraphQL, tRPC | REST unless the client needs flexible query composition; tRPC for full-stack TypeScript |
+| **Error strategy** | Result types, exceptions, error boundaries | Consistent within each layer — document the chosen approach |
+
+### Step 3 — Present decisions to the user
+
+Before writing `spec/architecture/`, present a short decision summary:
+
+```
+Architecture decisions for [project name]:
+- System: Modular Monolith (reason: single team, low microservice overhead)
+- Layers: Hexagonal (reason: domain has complex rules, needs testable core)
+- Data: Repository pattern + Prisma (reason: clean separation from ORM)
+- API: REST with OpenAPI contract (reason: standard, well-tooled)
+- Frontend state: Zustand (reason: moderate complexity, no prop-drilling needed)
+- Error handling: Result types in domain, thrown errors at API boundary
+
+Shall I proceed with this architecture, or would you like to change anything?
+```
+
+Wait for approval. If the user approves, write it to `spec/architecture/decisions.md` before writing any implementation.
+
+---
+
+## 3b. User Checkpoint Protocol
+
+**At every pipeline stage boundary**, Claude must pause and check in — unless the user has explicitly said "build autonomously" or "don't ask at each stage".
+
+### Checkpoint format (required at each stage transition)
+
+```
+✓ Completed: [stage name]
+  → [1-2 sentence summary of what was produced]
+
+Next: [next stage name]
+  → [1-2 sentence preview of what will happen]
+
+Ready to proceed? (yes / adjust first / skip this stage)
+```
+
+### Mandatory checkpoints (never skip these)
+
+| After stage | Why it matters |
+|---|---|
+| `product_spec` | User must confirm the problem and features are correct before domain work starts |
+| `architecture` | User must approve architecture decisions (see Section 3a) before any code is written |
+| `backend` | User should validate API shape before frontend is built against it |
+| `tests` | User should confirm test coverage is acceptable before calling the project done |
+
+### Autonomous mode
+
+If the user says "build it all" / "proceed autonomously" / "don't ask at each step", skip stage-transition checkpoints but still pause at the **mandatory checkpoints** above and still run the pre-code reasoning gate (Section 3c).
+
+---
+
+## 3c. Pre-Code Reasoning Gate
+
+**Before writing any implementation code** (route handlers, services, domain logic, UI components, hooks), run this gate for each logical unit of work. Do not skip it to save tokens — skipping it is what causes hallucinated code, silent failures, and security holes.
+
+### Gate (run per function / route / component)
+
+**1. Purpose** — What does this code need to do? One sentence.
+
+**2. Edge cases** — What inputs or states could break it? List at least two.
+
+**3. Error conditions** — What can fail? (DB down, invalid input, external API timeout, unauthenticated request.) How will each be handled?
+
+**4. Security** — Does this code touch user input, authentication, file system, external URLs, or database queries? If yes, apply the relevant checklist from `spec/security.md`.
+
+**5. Performance** — Is there an N+1 query risk? An unbounded loop? A missing index? A synchronous call that should be async?
+
+**6. Flow correctness** — Trace the happy path and at least one failure path. Does the flow make sense end-to-end?
+
+Only after answering all six points, write the code.
+
+### Confidence signal
+
+After writing a unit of code, append a one-line comment (removed before final commit):
+```
+// Gate: edge-cases ✓ error-handling ✓ security ✓ performance ✓
+```
+This acts as a self-check. If any point is uncertain, flag it explicitly to the user rather than guessing.
+
+---
+
 ## 4. Stack Configuration
 
 **Always read `stack.config.json`** before generating code.
