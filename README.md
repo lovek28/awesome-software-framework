@@ -2,9 +2,32 @@
 
 **Build full-stack apps with Claude — specs first, code second.**
 
-Scaffold a repo where Claude follows a clear pipeline: idea → specs → architecture → backend → frontend → tests. No code before architecture. You describe what you want; Claude asks for your stack and builds it step by step.
+Scaffold a repo where Claude follows a clear pipeline: idea → specs → architecture → backend → frontend → tests. No code before architecture. No architecture before specs. You stay in control at every stage.
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/lovek28/awesome-software-framework) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Powered by Superpowers](https://img.shields.io/badge/powered%20by-Superpowers-6c47ff)](https://github.com/obra/superpowers)
+
+---
+
+## Table of contents
+
+- [Built on Superpowers](#built-on-superpowers)
+- [Quick start](#quick-start)
+- [What you get](#what-you-get)
+- [How it works — step by step](#how-it-works--step-by-step)
+- [What Claude does at each stage](#what-claude-does-at-each-stage)
+- [User checkpoints](#user-checkpoints)
+- [Architecture decisions](#architecture-decisions)
+- [Pre-code reasoning](#pre-code-reasoning)
+- [Superpowers skill approval](#superpowers-skill-approval)
+- [Project shapes](#project-shapes)
+- [Presets](#presets)
+- [When to use this](#when-to-use-this)
+- [When not to use this](#when-not-to-use-this)
+- [Try these prompts](#try-these-prompts)
+- [Commands](#commands)
+- [Project structure](#project-structure)
+- [Upgrading a project](#upgrading-a-project)
+- [License](#license)
 
 ---
 
@@ -12,18 +35,14 @@ Scaffold a repo where Claude follows a clear pipeline: idea → specs → archit
 
 This framework is designed to work hand-in-hand with **[Superpowers](https://github.com/obra/superpowers)** — a set of skills that give Claude structured, disciplined development habits.
 
-> **Superpowers** teaches Claude *how to think*. **Awesome Software Framework** gives Claude *what to build toward*.
+> **Superpowers** teaches Claude *how to think and work*.
+> **Awesome Software Framework** gives Claude *what to build toward and where to put it*.
 
-| Layer | Tool | Responsibility |
-|-------|------|----------------|
-| **Agent discipline** | [Superpowers](https://github.com/obra/superpowers) | Brainstorm before coding · Write plans before executing · TDD · Code review |
-| **Project structure** | This framework | Spec-first pipeline · Stack config · Architecture · Monorepo layout |
+They solve different problems. Superpowers alone gives you a smarter Claude — but no project structure, no pipeline, no spec layout. This framework alone gives you a map — but without Superpowers, Claude skips straight to code and makes random decisions.
+
+Together they give you a project where every decision has a reason and every stage has your approval before it starts.
 
 ### Why use this if you already have Superpowers?
-
-Superpowers makes Claude smarter. It does not give you a project.
-
-After Superpowers finishes brainstorming and planning, Claude still needs to answer: *where do I put things? what stage am I on? what stack am I using?* That is what this framework provides.
 
 | Need | Superpowers alone | This framework |
 |------|:-----------------:|:--------------:|
@@ -32,81 +51,17 @@ After Superpowers finishes brainstorming and planning, Claude still needs to ans
 | Tech stack config (`stack.config.json`) | ✗ | ✓ |
 | Pipeline state tracking (`workflow.state.json`) | ✗ | ✓ |
 | Quality gates (no backend before architecture) | ✗ | ✓ |
+| Justified architecture decisions, presented for approval | ✗ | ✓ |
+| User checkpoint at every stage | ✗ | ✓ |
+| Pre-code reasoning (edge cases, errors, security, performance) | ✗ | ✓ |
 | Monorepo scaffold (`apps/`, `packages/`, `tests/`, `infra/`) | ✗ | ✓ |
-| Presets for CRUD, auth-dashboard, API-only, frontend-only | ✗ | ✓ |
-| Stage skipping for API-only or frontend-only projects | ✗ | ✓ |
+| Three project shapes (full-stack, API only, frontend only) | ✗ | ✓ |
+| Presets for common app types | ✗ | ✓ |
 | Pull framework updates without touching your code | ✗ | ✓ |
 
 **Use Superpowers** if you want a smarter Claude on any existing project.
-
 **Use this framework** if you are starting a new app and want a spec-first structure, a clear pipeline, and a monorepo layout ready from day one.
-
-**Use both** for the best experience — Superpowers handles how Claude thinks, this framework handles where everything goes.
-
-### How they work together
-
-When you open a project created by this framework and tell Claude what to build:
-
-1. **Superpowers** kicks in first — Claude uses `brainstorming` to ask questions one at a time and understand your idea before touching any file.
-2. **This framework** defines where everything goes — `spec/`, `stack.config.json`, the pipeline order, quality gates.
-3. **Superpowers** takes over for execution — `writing-plans` → `executing-plans` → `requesting-code-review` at each stage.
-4. **This framework** enforces what's built — specs before architecture, architecture before backend, backend before frontend.
-
-Install Superpowers once globally:
-
-```bash
-npx github:obra/superpowers
-```
-
-Then create a project:
-
-```bash
-npx github:lovek28/awesome-software-framework myapp
-```
-
----
-
-## From idea to app
-
-```mermaid
-sequenceDiagram
-    participant You
-    participant Claude
-    participant Superpowers
-    participant Pipeline
-    participant Repo
-
-    You->>Claude: "Build a CRUD app for inventory"
-    Claude->>Superpowers: brainstorming skill
-    Superpowers->>You: Asks one question at a time
-    You->>Claude: Answers + approves direction
-    Claude->>Superpowers: writing-plans skill
-    Superpowers->>Claude: Step-by-step plan
-    Claude->>Pipeline: Runs stages in order
-    Pipeline->>Repo: spec/ → architecture/ → apps/, packages/
-    Claude->>Superpowers: requesting-code-review
-    Claude->>You: "Backend done. Frontend next."
-```
-
----
-
-## Table of contents
-
-- [Built on Superpowers](#built-on-superpowers)
-- [Quick start](#-quick-start)
-- [What you get](#-what-you-get)
-- [When to use this](#-when-to-use-this)
-- [When not to use this](#-when-not-to-use-this)
-- [Use cases](#-use-cases)
-- [How it works](#-how-it-works)
-- [Pipeline flow](#-pipeline-flow)
-- [Architecture](#-architecture)
-- [Try these prompts](#-try-these-prompts)
-- [Commands & options](#-commands--options)
-- [Features at a glance](#-features-at-a-glance)
-- [Project structure](#-project-structure)
-- [Upgrading a project](#-upgrading-a-project)
-- [License](#license)
+**Use both** for the best experience.
 
 ---
 
@@ -127,25 +82,258 @@ cd myapp
 
 **Step 3 — Open in Cursor or VS Code and tell Claude what to build:**
 
-- *"Build a CRUD app for inventory"*
+- *"Build a CRUD app for managing inventory"*
 - *"Build a dashboard with login"*
-- *"Build a marketplace for freelancers"*
+- *"Build a REST API for a booking system"*
 
-Claude will ask for your tech stack (frontend, backend, database, etc.), write choices to `stack.config.json`, and run the full pipeline — specs → architecture → backend → frontend → tests. You answer and review.
+Claude checks Superpowers is installed, asks for your stack, confirms architecture decisions with you, and runs the pipeline stage by stage — pausing for your approval at every step.
 
 ---
 
 ## What you get
 
-| You get … | How it helps |
-|-----------|----------------|
+| You get | How it helps |
+|---------|--------------|
 | **A spec-first repo** | Product, domain, UX, and architecture are written before any app code. |
-| **One place for stack** | `stack.config.json` stores your choices; Claude generates code to match. |
-| **A clear pipeline** | Idea → product spec → domain → UX → UI → architecture → backend → frontend → tests (with optional API contract and docs). |
-| **Superpowers integration** | Claude brainstorms, plans, executes, and reviews at every stage — no more jumping straight to code. |
-| **Three project shapes** | Full-stack, API only (`frontend: none`), or frontend only (`backend: none`). Set it in `stack.config.json`; Claude skips the irrelevant stages automatically. |
-| **Presets for speed** | Say "CRUD app for X", "API only", or "frontend only" and Claude applies the matching preset. |
-| **Upgrade path** | Run `create-awesome-software upgrade` to pull template updates without touching your specs or code. |
+| **Stack config** | `stack.config.json` stores your choices; Claude generates code to match exactly. |
+| **A clear pipeline** | Idea → product spec → domain → UX → UI → architecture → backend → frontend → tests. |
+| **Justified architecture** | Claude reasons through architecture, patterns, and best practices for your specific project — then asks for your approval before writing a single file. |
+| **User checkpoints** | Claude pauses at every stage transition: here's what I completed, here's what comes next, shall I proceed? |
+| **Pre-code reasoning** | Before writing any function or component, Claude reasons through edge cases, error handling, security, and performance — reducing hallucinated code and silent failures. |
+| **Superpowers skill approval** | Claude asks your permission before activating any Superpowers skill (brainstorming, writing-plans, executing-plans, code review). |
+| **Three project shapes** | Full-stack, API only, or frontend only — set one key in `stack.config.json`, Claude skips irrelevant stages. |
+| **Presets for speed** | Say "CRUD app for X" and Claude applies the matching preset. |
+| **Upgrade path** | Pull template updates later without touching your specs or code. |
+
+---
+
+## How it works — step by step
+
+### 1. Superpowers check
+
+The very first thing Claude does — before reading workflow state or touching any file — is check whether Superpowers is installed. If it is not, Claude stops and asks:
+
+```
+This framework works best with Superpowers.
+Install: npx github:obra/superpowers
+Install first, or continue without it?
+```
+
+### 2. Stack questions
+
+At the idea stage, if `stack.config.json` is empty, Claude asks these one at a time:
+
+1. What are you building?
+2. Do you need a frontend, backend, or both?
+3. What frontend framework? (Next.js / React / Vue / none)
+4. What backend framework? (Fastify / Express / none)
+5. What database? (PostgreSQL / MySQL / SQLite / none)
+6. ORM? (Prisma / Drizzle / none)
+7. Styling? (Tailwind / CSS Modules / none)
+8. Auth, deploy target, admin panel? (optional)
+
+Answers are written to `stack.config.json` immediately. Claude does not write specs or code until stack is confirmed.
+
+### 3. Brainstorming (with your approval)
+
+Claude asks permission before activating the Superpowers `brainstorming` skill:
+
+```
+I'd like to activate the Superpowers `brainstorming` skill.
+It will: ask structured questions one at a time to surface
+constraints before writing any specs.
+Shall I proceed? (yes / skip / tell me more)
+```
+
+If you approve, brainstorming runs. If you skip, Claude proceeds with built-in questions and notes the skip.
+
+### 4. Spec pipeline
+
+Claude runs each stage in order, never skipping ahead:
+
+```
+Idea → Product spec → Domain rules → UX flows → UI system → Architecture
+→ [API contract — optional] → Backend → Frontend → Tests → [Docs — optional]
+```
+
+At every stage, Claude uses `writing-plans` (with your approval) to write a plan before touching files, and `requesting-code-review` (with your approval) after each stage completes.
+
+### 5. Your checkpoint at every stage
+
+After every stage, Claude pauses:
+
+```
+✓ Completed: product_spec
+  → Defined problem, target users, and 4 core features.
+
+Next: domain_rules
+  → Define business rules — who can do what, validation logic,
+    domain entities.
+
+Ready to proceed? (yes / adjust first / skip)
+```
+
+You stay in control. Claude never moves to the next stage without your go-ahead.
+
+### 6. Architecture decisions — your approval required
+
+Before writing any architecture spec or implementation code, Claude reasons through the project and presents justified decisions:
+
+```
+Architecture decisions for [your app]:
+- System: Modular Monolith (single team, no microservice overhead)
+- Layers: Hexagonal (complex domain rules, testable core needed)
+- Data: Repository + Prisma (clean ORM separation)
+- API: REST + OpenAPI contract
+- Frontend state: Zustand (moderate complexity)
+- Error handling: Result types in domain, HTTP errors at API boundary
+
+Shall I proceed with this, or would you like to change anything?
+```
+
+Claude does not write a single file until you approve.
+
+### 7. Pre-code reasoning before every unit of code
+
+Before writing any route, service, domain function, or UI component, Claude runs a reasoning gate:
+
+1. **Purpose** — what does this code do?
+2. **Edge cases** — what inputs or states could break it?
+3. **Error conditions** — what can fail, and how will each be handled?
+4. **Security** — does this touch user input, auth, file system, or DB queries?
+5. **Performance** — N+1 risk? unbounded loops? missing indexes?
+6. **Flow correctness** — does the happy path and failure path make sense end to end?
+
+Only after all six are answered does Claude write the code.
+
+---
+
+## What Claude does at each stage
+
+| Stage | What happens |
+|-------|-------------|
+| `idea` | Claude brainstorms with you, collects stack, writes `stack.config.json` |
+| `product_spec` | Writes problem statement, target users, core features, functional requirements |
+| `domain_rules` | Writes business rules, domain entities, validation logic |
+| `ux_flow` | Maps user journeys and screen flows |
+| `ui_system` | Defines component patterns, tokens, design system |
+| `architecture` | Reasons through and presents system architecture for your approval, writes `spec/architecture/decisions.md` |
+| `api_contract` *(optional)* | Generates `spec/api/openapi.yaml`; backend and frontend conform to it |
+| `backend` | Implements routes, services, domain logic — with pre-code reasoning on each unit |
+| `frontend` | Builds UI against the API contract — with pre-code reasoning on each component |
+| `tests` | Derives acceptance tests from specs; sets up test runner and coverage |
+| `docs` *(optional)* | Generates human-readable docs from specs |
+
+---
+
+## User checkpoints
+
+Checkpoints happen automatically at every stage boundary. You can say:
+
+- **"yes"** — proceed to next stage
+- **"adjust first"** — Claude pauses and lets you make changes
+- **"skip"** — Claude skips the next stage (for optional stages only)
+
+Four checkpoints are **mandatory** and can never be skipped, even if you say "build autonomously":
+
+| Checkpoint | Why |
+|------------|-----|
+| After `product_spec` | Confirm the problem and features are correct before domain work |
+| After `architecture` | Approve architecture decisions before any code is written |
+| After `backend` | Validate API shape before frontend is built against it |
+| After `tests` | Confirm coverage before calling the project done |
+
+---
+
+## Architecture decisions
+
+At the architecture stage, Claude does not randomly pick patterns. It analyses:
+
+- Project scale (personal tool / startup / enterprise)
+- Data model complexity
+- Real-time requirements
+- Read/write patterns
+- Team size (implied)
+- Deployment target
+
+Then decides — with written justification — the best choice for:
+
+| Dimension | Options Claude considers |
+|-----------|--------------------------|
+| System architecture | Monolith, Modular Monolith, Microservices, Serverless |
+| Code organisation | Layered (MVC), Hexagonal, Feature-sliced |
+| Data access | Active Record, Repository, CQRS |
+| Frontend state | Local state, Context, Zustand, Redux |
+| API style | REST, GraphQL, tRPC |
+| Error strategy | Result types, exceptions, error boundaries |
+
+All decisions are written to `spec/architecture/decisions.md` after your approval.
+
+---
+
+## Pre-code reasoning
+
+Before writing any implementation unit, Claude reasons out loud:
+
+```
+Before writing POST /tasks:
+1. Purpose: create a task scoped to a team workspace
+2. Edge cases: deadline in the past, assignee not a team member, empty title
+3. Errors: DB fail → 500, invalid assignee → 404, missing fields → 422, unauthed → 401
+4. Security: Zod validation, JWT team membership check, Prisma parameterised queries
+5. Performance: single write, membership check in same transaction
+6. Flow: auth check → validate → check assignee membership → insert → 201
+```
+
+Then writes the code. This reduces hallucinated code, silent failures, and security holes before they happen — not after.
+
+---
+
+## Superpowers skill approval
+
+Claude asks permission before activating any Superpowers skill:
+
+```
+I'd like to activate the Superpowers `writing-plans` skill.
+It will: write a step-by-step implementation plan before touching any files.
+Shall I proceed? (yes / skip / tell me more)
+```
+
+| Skill | When Claude requests it |
+|-------|------------------------|
+| `brainstorming` | Before writing any specs |
+| `writing-plans` | Before starting each stage |
+| `executing-plans` | When executing a written plan via subagents |
+| `requesting-code-review` | After each stage completes |
+
+If you say skip, Claude falls back to built-in behaviour and notes it.
+
+---
+
+## Project shapes
+
+Set one key in `stack.config.json` to shape the entire project:
+
+| Shape | Config | Stages skipped |
+|-------|--------|----------------|
+| **Full-stack** | `frontend`, `backend`, `database` all set | None |
+| **API only** | `frontend: "none"` | `ux_flow`, `ui_system`, `frontend` |
+| **Frontend only** | `backend: "none"`, `database: "none"` | `domain_rules`, `backend`, `api_contract`, DB setup |
+
+Claude reads this at the start and automatically skips the irrelevant stages.
+
+---
+
+## Presets
+
+Presets apply a matching configuration when the request clearly fits a known pattern. Claude still asks for your approval before using one.
+
+| Preset | When it applies | What it sets up |
+|--------|----------------|-----------------|
+| `crud` | "Build an admin to manage X" | Full-stack, REST, Prisma, Tailwind |
+| `auth-dashboard` | "Build a dashboard with login" | Full-stack, JWT auth, protected routes |
+| `api-only` | "Build an API for Y, no UI" | Backend + DB, OpenAPI contract, no frontend |
+| `frontend-only` | "Build a Next.js app using Stripe / Supabase / external API" | Frontend only, no backend or DB |
 
 ---
 
@@ -153,255 +341,105 @@ Claude will ask for your tech stack (frontend, backend, database, etc.), write c
 
 | Situation | Why it fits |
 |-----------|-------------|
-| **Greenfield web app or API** | You're starting from zero and want a clear path from idea to running code. |
-| **You want specs before code** | You care about product spec, domain model, and architecture before implementation. |
-| **You use Claude (Cursor, etc.)** | The pipeline is designed for AI-assisted development with a single, deterministic workflow. |
-| **You like a fixed pipeline** | You're happy with idea → spec → domain → UX → architecture → backend → frontend → tests. |
-| **CRUD, dashboard, API, frontend, or small product** | Presets for full-stack, API-only, and frontend-only cover the most common shapes. |
-| **Solo or small team** | One person (or a few) can drive the chat and own the repo; no heavy process. |
-| **Learning SDLC or DDD** | The repo structure and stages teach spec-first, domain-driven, layered design. |
-| **You want upgradeable template** | You're fine with `stack.config.json` and workflow state and want to pull framework updates later. |
+| Starting a new web app or API from zero | Clear path from idea to running code |
+| You want specs before code | Pipeline enforces spec → architecture → implementation order |
+| You use Claude (Cursor, VS Code) | Designed for AI-assisted development |
+| You want to stay in control | Checkpoints at every stage, approval before every major decision |
+| Solo builder or small team | One person can drive the whole pipeline |
+| Learning spec-first or DDD | Repo structure and stages teach the discipline |
 
 ---
 
 ## When not to use this
 
-| Situation | Why it's a poor fit |
+| Situation | Why it is a poor fit |
 |-----------|----------------------|
-| **Existing codebase with no specs** | The pipeline assumes you start from idea/spec. Migrating a large legacy app is a big refactor. |
-| **You don't want a pipeline** | If you prefer free-form coding, this workflow will feel rigid. |
-| **Tiny one-off script or CLI** | Overkill for a single file or a 100-line script. |
-| **Non-Claude / no AI assistant** | The instructions target Claude; other tools won't follow the same flow without adaptation. |
-| **Heavy existing process** | If you already have strict PM/design/architecture gates, this pipeline may duplicate them. |
-| **Mobile-only with no web** | The template is web + API centric; mobile (e.g. Expo) is optional and less built-out. |
+| Existing codebase with no specs | Pipeline assumes you start from idea — migrating is a big lift |
+| You prefer free-form coding | The pipeline is intentionally rigid |
+| Tiny one-off script or CLI | Overkill for a single file or 100-line script |
+| Mobile-only with no web | Template is web + API centric; Expo/React Native support is minimal |
+| Non-Claude AI assistant | Instructions target Claude specifically |
 
-You can still clone the repo and use only the parts you like (e.g. just the spec layout or the workflow config).
-
----
-
-## Use cases
-
-### By project type
-
-| Project type | How you might use it | Preset / mode |
-|--------------|----------------------|----------------|
-| **CRUD / admin tool** | "Build an admin to manage X" → pick stack → get spec + API + UI. | `crud` |
-| **Dashboard with auth** | "Build a dashboard with GitHub login" → auth + protected pages. | `auth-dashboard` |
-| **REST API only** | "Build an API for Y, no UI" → spec + architecture + OpenAPI + backend + tests. | `api-only` |
-| **Frontend only** | "Build a Next.js app that uses Stripe/Supabase/external API" → no backend or DB managed here. | `frontend-only` |
-| **Full-stack product (MVP)** | "Build a marketplace for Z" → full pipeline: spec, domain, UX, architecture, backend, frontend, tests. | Full mode |
-| **Internal tool or portal** | "Build a tool for our team to do W" → same pipeline; add auth and deploy as needed. | Full or quick mode |
-| **Learning project** | "Build a blog / todo / booking app" to learn the stack and spec-first flow. | Any preset or full |
-
-### By goal
-
-| Goal | What you do |
-|------|-------------|
-| **Ship an MVP fast** | Use quick mode or a preset; answer stack questions; let Claude run the pipeline. |
-| **Keep a single source of truth** | Specs in `spec/`; code generated from them; change spec then ask Claude to update code. |
-| **Align with stakeholders** | Share product spec and UX flows before implementation; iterate on spec, then regenerate. |
-| **Standardize stack and stages** | Set stack once in `stack.config.json`; use the same pipeline across projects. |
-| **Add an admin or mobile app later** | Start with web + API; add `frontend_admin` or `mobile` in stack and run frontend for the new app. |
-
-### By role
-
-| Role | How you use it |
-|------|----------------|
-| **Founder / PM** | Describe the product; review product spec and UX; leave stack and implementation to Claude (or a dev). |
-| **Developer** | Run the CLI; open in Cursor; answer stack and follow-up questions; review and refine generated code. |
-| **Designer** | Provide flows and UI direction; Claude fills `spec/ux/` and `spec/ui/`; you review and iterate. |
-| **Solo builder** | One person does idea → spec → stack → pipeline; use presets and quick mode to move fast. |
-
----
-
-## How it works
-
-1. **You describe the product** in plain language (e.g. "Build a task manager for teams").
-2. **Superpowers `brainstorming`** — Claude asks clarifying questions one at a time. No code yet.
-3. **Claude asks for your stack** — frontend, backend, database, ORM, styling, auth, deploy — and saves it in `stack.config.json`.
-4. **Superpowers `writing-plans`** — Claude writes a plan for each stage before touching files.
-5. **Claude runs the pipeline in order** — specs (product, domain, UX, UI), then architecture, then backend, then frontend, then tests.
-6. **Superpowers `requesting-code-review`** — Claude reviews each stage before advancing.
-7. **Specs stay the source of truth.** Code is generated from them; change specs and ask Claude to update code.
-
----
-
-## Pipeline flow
-
-Stages run in order. Optional stages (API contract, Docs) can be enabled in `workflow.config.json`. Presets skip or merge some steps for speed.
-
-```mermaid
-flowchart LR
-    subgraph discipline["🧠 Superpowers layer"]
-        SP1[brainstorming]
-        SP2[writing-plans]
-        SP3[executing-plans]
-        SP4[requesting-code-review]
-    end
-    subgraph spec["📋 Spec phase"]
-        A[Idea] --> B[Product spec]
-        B --> C[Domain]
-        C --> D[UX flows]
-        D --> E[UI system]
-    end
-    E --> F[Architecture]
-    F --> G{API contract?}
-    G -->|optional| H[OpenAPI]
-    G --> I[Backend]
-    H --> I
-    I --> J[Frontend]
-    J --> K[Tests]
-    K --> L{Docs?}
-    L -->|optional| M[Docs from spec]
-    SP1 -.->|before spec| A
-    SP2 -.->|before each stage| F
-    SP3 -.->|during each stage| I
-    SP4 -.->|after each stage| K
-```
-
-**Linear view:**
-
-```
-[brainstorm] → Idea → Product spec → Domain → UX → UI → Architecture
-  → [API contract?] → Backend → Frontend → Tests → [Docs?]
-  ↑ plan before each stage · review after each stage (Superpowers)
-```
-
----
-
-## Architecture
-
-Generated projects follow a **spec-first, layered** layout: specs drive architecture, which drives implementation.
-
-```mermaid
-flowchart TB
-    subgraph specs["Specification layer"]
-        S1[Product spec]
-        S2[Domain / UX / UI]
-        S3[Architecture]
-    end
-    subgraph config["Configuration"]
-        CFG[stack.config.json]
-        WF[workflow.state.json]
-    end
-    subgraph app["Application layer"]
-        WEB[apps/web]
-        ADMIN[apps/admin]
-        API[apps/api]
-    end
-    subgraph packages["Shared packages"]
-        UI[packages/ui]
-        SVC[packages/services]
-        DOM[packages/domain]
-        SHR[packages/shared]
-    end
-    S1 --> S2 --> S3
-    S3 --> API
-    S3 --> WEB
-    S3 --> ADMIN
-    API --> SVC --> DOM
-    WEB --> UI --> SVC
-    CFG -.-> API
-    CFG -.-> WEB
-```
-
-**Layers (top = user-facing, bottom = foundation):**
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  apps/web  (optional: apps/admin, apps/mobile)          │  ← Frontend
-├─────────────────────────────────────────────────────────┤
-│  packages/ui                                            │  ← Shared UI
-├─────────────────────────────────────────────────────────┤
-│  apps/api                                               │  ← HTTP API
-├─────────────────────────────────────────────────────────┤
-│  packages/services  (use cases)                         │  ← Application logic
-├─────────────────────────────────────────────────────────┤
-│  packages/domain  (entities, rules)                     │  ← Domain model
-├─────────────────────────────────────────────────────────┤
-│  spec/  (product, domain, ux, ui, architecture)         │  ← Source of truth
-└─────────────────────────────────────────────────────────┘
-```
+You can still clone the repo and use only the parts you like — just the spec layout, just the workflow config, or just the CLAUDE.md instructions.
 
 ---
 
 ## Try these prompts
 
-Once your project is open in Cursor/VS Code:
+Open your project in Cursor or VS Code and try:
 
-| Goal | Example prompt |
-|------|-----------------|
+| Goal | Prompt |
+|------|--------|
 | Start from scratch | *"Build a CRUD app for managing projects"* |
 | Auth + dashboard | *"Build a dashboard with GitHub login"* |
 | API only | *"Build a REST API for a booking system, no UI"* |
+| Frontend only | *"Build a Next.js app that uses Stripe for payments"* |
 | Custom stack | *"Build a blog with Next.js, Prisma, and Tailwind"* |
 
-Claude will brainstorm with you first (Superpowers), then run the pipeline.
+Claude will check Superpowers, ask stack questions, confirm architecture, and run the pipeline — pausing for your input at every stage.
 
 ---
 
-## Commands & options
+## Commands
 
-| Command | Description |
-|--------|-------------|
-| `npx github:lovek28/awesome-software-framework <name>` | Create a new project (no clone needed). |
-| `node cli.js <name>` | Create a new project (from a clone of this repo). |
-| `create-awesome-software upgrade [path]` | Update an existing project with the latest template files. Your specs, code, and workflow state are not changed. |
+| Command | What it does |
+|---------|-------------|
+| `npx github:lovek28/awesome-software-framework <name>` | Create a new project (no clone needed) |
+| `node cli.js <name>` | Create a new project from a local clone |
+| `npx github:lovek28/awesome-software-framework upgrade` | Update an existing project with the latest template files |
 
 | Option | Description |
 |--------|-------------|
-| `-v` / `--version` | Print the CLI version. |
-| `-o` / `--output-dir <path>` | Create the project in this directory (default: current directory). |
-
-Tip: the CLI may show *"Update available: x.y.z"* if a newer version exists. Set `NO_UPDATE_CHECK=1` to disable the check.
-
----
-
-## Features at a glance
-
-- **Superpowers integration** — Brainstorm, plan, execute, and review at every stage. No code before thinking.
-- **Workflow** — Optional/custom stages, quality gates, quick vs full mode, checkpoints and resume.
-- **Auth & security** — Optional auth in stack; security checklist in `spec/security.md`; secrets only in env.
-- **Deploy & CI** — Optional deploy target (Vercel, Docker, Fly, Railway); CI workflow example.
-- **API contract** — Optional OpenAPI spec; backend and frontend stay in sync.
-- **Tests** — Test runner and E2E setup; optional coverage; tests derived from specs.
-- **Observability** — Health endpoint, structured logging, optional runbooks and ADRs.
-- **Multi-app & presets** — Optional admin or mobile app; presets for CRUD, auth-dashboard, api-only, and frontend-only.
-- **Extensibility** — Hooks (before/after stage), custom stages.
-- **Docs from spec** — Optional docs stage; API and product/UX docs generated from spec.
-- **Token control** — Per-stage context scope and optional summarization to keep usage predictable.
+| `-v` / `--version` | Print the CLI version |
+| `-o` / `--output-dir <path>` | Create the project in a specific directory |
 
 ---
 
 ## Project structure
 
-After you run the CLI, your project looks like this:
-
 ```
 myapp/
-├── CLAUDE.md                 # Main instructions for Claude
-├── stack.config.json         # Your tech stack
-├── workflow.config.json      # Pipeline stages, optional ones, hooks
+├── CLAUDE.md                   # All instructions for Claude — start here
+├── stack.config.json           # Your tech stack choices
+├── workflow.config.json        # Pipeline stages, optional stages, hooks
 ├── .claude/
-│   ├── workflow.state.json  # Current stage, idea, completed list, mode
-│   ├── instructions.md      # Workflow rules
-│   ├── agents.md            # Spec / Backend / Frontend agents
-│   ├── context-scope.md     # What to read per stage
-│   ├── stages/              # Per-stage instructions (with Superpowers hooks)
-│   └── skills/              # Stack & stage skills (e.g. Next.js, Prisma)
+│   ├── workflow.state.json     # Current stage, completed list, mode
+│   ├── instructions.md         # Workflow rules
+│   ├── agents.md               # Spec / Backend / Frontend agents
+│   ├── context-scope.md        # What Claude reads per stage
+│   ├── stages/                 # Per-stage instructions
+│   └── skills/                 # Stack skills (Next.js, Prisma, Fastify, etc.)
 ├── spec/
-│   ├── product/, domain/, ux/, ui/, architecture/
-│   ├── security.md
-│   └── api/openapi.yaml     # When using API contract
-├── .presets/                # CRUD, auth-dashboard, api-only
-├── apps/                    # web, api; optionally admin, mobile
-├── packages/                # domain, services, ui, shared
-├── tests/                   # unit, integration, e2e
-├── docs/                    # Generated from spec (optional)
-└── infra/                   # DB, deploy, CI
+│   ├── product/                # Product spec, problem, features, requirements
+│   ├── domain/                 # Business rules, entities, validation
+│   ├── ux/                     # User flows, journeys
+│   ├── ui/                     # Component patterns, design tokens
+│   ├── architecture/           # System architecture, decisions, data model
+│   ├── security.md             # OWASP checklist, auth decisions
+│   └── api/openapi.yaml        # API contract (when api_contract stage is enabled)
+├── .presets/                   # crud, auth-dashboard, api-only, frontend-only
+├── apps/
+│   ├── web/                    # Frontend app
+│   ├── api/                    # Backend API
+│   └── admin/                  # Optional admin panel
+├── packages/
+│   ├── domain/                 # Business logic, entities
+│   ├── services/               # Application services, use cases
+│   ├── ui/                     # Shared UI components
+│   └── shared/                 # Shared types and utilities
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+├── docs/                       # Generated from spec (optional docs stage)
+└── infra/                      # Docker, CI, deploy configs
 ```
 
-The most important files: **CLAUDE.md** (how Claude works), **.claude/workflow.state.json** (current stage), **stack.config.json** (your choices).
+The three files that matter most:
+
+- **`CLAUDE.md`** — all instructions for how Claude works in this project
+- **`.claude/workflow.state.json`** — the current pipeline stage and what is completed
+- **`stack.config.json`** — your tech stack; Claude generates code to match
 
 ---
 
@@ -414,7 +452,7 @@ cd myapp
 npx github:lovek28/awesome-software-framework upgrade
 ```
 
-This updates CLAUDE.md, workflow config, `.claude` instructions/agents/context-scope/extensibility, docker-compose, and `.env.example`. Your **specs**, **code**, **stack.config.json**, and **workflow state** are left as-is.
+This updates `CLAUDE.md`, workflow config, `.claude/` instructions, Docker setup, and `.env.example`. Your specs, code, `stack.config.json`, and workflow state are never touched.
 
 ---
 
