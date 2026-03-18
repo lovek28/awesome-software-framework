@@ -230,12 +230,22 @@ At the very start of a new project (when `workflow.state.json` has `stage: "idea
 
 **Superpowers skills to use (when installed):**
 
-| When | Use skill |
-|------|-----------|
-| User describes what to build | `brainstorming` — ask questions one at a time, surface constraints, get approval |
-| Ready to plan a stage | `writing-plans` — write an implementation plan before touching files |
-| Executing a plan | `executing-plans` — follow the plan step by step via subagents |
-| Stage complete | `requesting-code-review` — review before advancing to next stage |
+**Always ask for approval before activating any Superpowers skill.** Use this format:
+
+```
+I'd like to activate the Superpowers `[skill-name]` skill now.
+It will: [one sentence — what it does and why it's useful here].
+Shall I proceed? (yes / skip / tell me more)
+```
+
+Only activate the skill after the user confirms. If they say skip, proceed with built-in behaviour and note that the skill was skipped.
+
+| When | Skill to request approval for |
+|------|-------------------------------|
+| User describes what to build | `brainstorming` — structured questions one at a time, surfaces constraints, gets approval before specs |
+| Ready to plan a stage | `writing-plans` — writes a step-by-step implementation plan before touching any files |
+| Executing a plan | `executing-plans` — follows the plan via subagents, one step at a time |
+| Stage complete | `requesting-code-review` — reviews all changes before advancing to the next stage |
 
 **Stack collection (always required — with or without Superpowers):**
 
