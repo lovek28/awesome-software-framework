@@ -191,7 +191,25 @@ If the file is empty (e.g. `{}`), ask the user what they're building during `bra
 - **Context scope:** Read only files needed for the current stage. See `.claude/context-scope.md` for a per-stage list of what to read and what to avoid; follow priority and incremental-read guidance when context is tight.
 - For implementation stages, prefer reading the relevant spec and architecture files plus the target package/app, not the entire repo. Work in small scopes (e.g. one route or package at a time) on large apps.
 - **Summaries (optional):** After a stage, you may write a short summary to `workflow.context.json` or `.claude/summaries/<stage>.md` (key decisions, files changed) so later stages can use it instead of re-reading all prior outputs.
-- **Skills:** Apply reusable know-how from `.claude/skills/`. When backend is Fastify, use `fastify` and `prisma` (if orm is Prisma); when frontend is Next.js, use `nextjs`. For product_spec stage use `product-spec`; for architecture/api_contract use `api-design`. See `.claude/skills/README.md` for the full list and when they apply.
+- **Skills:** Apply reusable know-how from `.claude/skills/`. Read `stack.config.json` and load the matching skill for each technology chosen:
+
+  | Technology | Skill file |
+  |------------|------------|
+  | `backend: "fastify"` | `fastify.md` |
+  | `backend: "express"` | `express.md` |
+  | `frontend: "nextjs"` | `nextjs.md` |
+  | `frontend: "react"` | `react.md` |
+  | `frontend: "vue"` or `"nuxt"` | `vue.md` |
+  | `orm: "prisma"` | `prisma.md` |
+  | `orm: "drizzle"` | `drizzle.md` |
+  | Stage: `product_spec` | `product-spec.md` |
+  | Stage: `architecture` or `api_contract` | `api-design.md` |
+
+  **No matching skill?** If the user chose a technology not listed above (e.g. NestJS, Hono, SvelteKit, TypeORM), do the following:
+  1. Tell the user: "No built-in skill exists for `[technology]`. I'll apply the general principles from `api-design.md` and the pre-code reasoning gate. You can add a custom skill at `.claude/skills/[name].md` to override this — see `.claude/skills/README.md` for the format."
+  2. Apply `api-design.md` (for backend) or general frontend patterns from the spec.
+  3. Apply Section 3c (pre-code reasoning gate) as normal — the six questions still apply regardless of stack.
+  4. State clearly in each response which technology conventions you are following so the user can correct you.
 
 ## 6. Security and secrets
 
