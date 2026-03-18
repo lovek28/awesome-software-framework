@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-implementation-gate.js",
+            "description": "Block implementation code before architecture is completed and reasoning gate is written"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-spec-gate.js",
+            "description": "Block spec files from being written out of pipeline order"
+          }
+        ]
+      }
+    ]
+  }
+}

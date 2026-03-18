@@ -136,31 +136,67 @@ If the user says "build it all" / "proceed autonomously" / "don't ask at each st
 
 ## 3c. Pre-Code Reasoning Gate
 
-**Before writing any implementation code** (route handlers, services, domain logic, UI components, hooks), run this gate for each logical unit of work. Do not skip it to save tokens — skipping it is what causes hallucinated code, silent failures, and security holes.
+**Before writing any implementation code** (route handlers, services, domain logic, UI components, hooks), you must write a reasoning gate file first. This is enforced by a hook — the hook will block any write to `apps/` or `packages/` unless the gate file exists.
 
-### Gate (run per function / route / component)
+### Step 1 — Write the gate file first
 
-**1. Purpose** — What does this code need to do? One sentence.
+At the start of each implementation stage, write `.claude/gates/<stage>-gate.md` before touching any code file. The hook checks this file exists.
 
-**2. Edge cases** — What inputs or states could break it? List at least two.
+Example for the `backend` stage — write `.claude/gates/backend-gate.md`:
 
-**3. Error conditions** — What can fail? (DB down, invalid input, external API timeout, unauthenticated request.) How will each be handled?
+```markdown
+# Backend stage — pre-code reasoning gate
 
-**4. Security** — Does this code touch user input, authentication, file system, external URLs, or database queries? If yes, apply the relevant checklist from `spec/security.md`.
+## Batch: Task routes (POST /tasks, GET /tasks, GET /tasks/:id, PATCH /tasks/:id, DELETE /tasks/:id)
 
-**5. Performance** — Is there an N+1 query risk? An unbounded loop? A missing index? A synchronous call that should be async?
+### 1. Purpose
+Implement CRUD task management scoped to team workspaces with JWT auth.
 
-**6. Flow correctness** — Trace the happy path and at least one failure path. Does the flow make sense end-to-end?
+### 2. Edge cases
+- Assignee not a member of the team
+- Deadline set in the past
+- Title empty or over 255 chars
+- Team does not exist
 
-Only after answering all six points, write the code.
+### 3. Error conditions
+- DB insert fails → 500 with structured error, no stack trace to client
+- Invalid assignee ID → 404
+- Missing required fields → 422 with field-level errors
+- Unauthenticated request → 401 before any DB query
+- Assignee not in team → 403 before DB write
 
-### Confidence signal
+### 4. Security
+- Zod schema validation on all inputs
+- JWT team membership verified before any DB write
+- Prisma parameterised queries only — no raw SQL
+- No sensitive data in error responses
 
-After writing a unit of code, append a one-line comment (removed before final commit):
+### 5. Performance
+- Single DB write per request — no N+1 risk on create
+- List query uses include for assignee — no N+1
+- Team membership check in same transaction as insert
+
+### 6. Flow correctness
+Happy path: auth check → validate input → check assignee in team → insert → 201
+Failure: assignee not in team → 403 returned before any DB write
+Failure: invalid input → 422 returned before any DB query
 ```
-// Gate: edge-cases ✓ error-handling ✓ security ✓ performance ✓
-```
-This acts as a self-check. If any point is uncertain, flag it explicitly to the user rather than guessing.
+
+### Step 2 — Write the code
+
+Only after the gate file is written, write implementation files. The gate file covers the whole stage — you do not need a separate file per function.
+
+### Step 3 — Flag uncertainty
+
+If any of the six points cannot be answered confidently, stop and ask the user before writing code. Do not guess.
+
+### Why this is enforced by a hook
+
+`.claude/hooks/check-implementation-gate.js` runs before every Write/Edit to `apps/` or `packages/`. It checks:
+1. `architecture` is in `workflow.state.json` completed list
+2. `.claude/gates/<current-stage>-gate.md` exists
+
+If either check fails, the hook exits with code 2 and blocks the write. Claude sees the error message and cannot proceed until the gate is satisfied.
 
 ---
 
