@@ -99,7 +99,25 @@ Architecture decisions for [project name]:
 Shall I proceed with this architecture, or would you like to change anything?
 ```
 
-Wait for approval. If the user approves, write it to `spec/architecture/decisions.md` before writing any implementation.
+Wait for approval. If the user approves, **write the gate file first** before writing any architecture spec:
+
+Write `.claude/gates/architecture-decisions.md`:
+```markdown
+# Architecture decisions
+## Analysis
+[Your reasoning about scale, complexity, real-time needs, team size]
+## Decisions
+- System: Modular Monolith (reason: single team, no microservice overhead)
+- Layers: Hexagonal (reason: complex domain rules, testable core needed)
+- Data: Repository + Prisma (reason: clean ORM separation)
+- API: REST + OpenAPI (reason: standard, well-tooled)
+- State: Zustand (reason: moderate complexity)
+- Errors: Result types in domain, HTTP errors at API boundary
+## User approval
+Approved: yes
+```
+
+**This is enforced by a hook.** `.claude/hooks/check-architecture-decisions-gate.js` blocks any write to `spec/architecture/` (except `decisions.md` itself) unless `.claude/gates/architecture-decisions.md` exists.
 
 ---
 
@@ -127,6 +145,23 @@ Ready to proceed? (yes / adjust first / skip this stage)
 | `architecture` | User must approve architecture decisions (see Section 3a) before any code is written |
 | `backend` | User should validate API shape before frontend is built against it |
 | `tests` | User should confirm test coverage is acceptable before calling the project done |
+
+### Checkpoint artifact (enforced by hook)
+
+Before updating `workflow.state.json` to mark a stage as completed, write `.claude/gates/checkpoint-<stage>.md`:
+
+```markdown
+# Checkpoint: product_spec
+## Completed
+Defined problem (teams losing track of tasks), target users (small teams 2-20),
+and 4 core features including task CRUD, assignees, deadlines, team workspaces.
+## Next stage
+domain_rules — define business rules, domain entities, and validation logic.
+## User response
+yes
+```
+
+**This is enforced by a hook.** `.claude/hooks/check-stage-advance-gate.js` blocks any update to `workflow.state.json` that advances the pipeline unless the checkpoint file for that stage exists. For the 4 mandatory stages (`product_spec`, `architecture`, `backend`, `tests`), it also checks the file contains a `## User response` section.
 
 ### Autonomous mode
 
