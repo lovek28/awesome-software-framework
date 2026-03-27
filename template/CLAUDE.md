@@ -336,6 +336,20 @@ Only activate the skill after the user confirms. If they say skip, proceed with 
 | Executing a plan | `executing-plans` — follows the plan via subagents, one step at a time |
 | Stage complete | `requesting-code-review` — reviews all changes before advancing to the next stage |
 
+**Superpowers skills to NEVER use in this project:**
+
+The GSD (Get Stuff Done) family of skills creates its own project-management layer (`PROJECT.md`, `.planning/` directory, phases, milestones) that **completely bypasses this framework's pipeline**. Do not use them — they will ignore `workflow.state.json`, `workflow.config.json`, and all spec stages.
+
+| Skill | Why it is forbidden here |
+|-------|--------------------------|
+| `gsd:new-project` | Creates its own PROJECT.md and .planning/ structure — replaces this framework's pipeline |
+| `gsd:new-milestone` | Creates milestone/phase structure outside the framework |
+| `gsd:plan-phase` | Plans arbitrary phases instead of the framework's defined stages |
+| `gsd:execute-phase` | Executes GSD phases, bypassing workflow.state.json and gates |
+| Any other `gsd:*` skill | All GSD skills assume a different project structure |
+
+If you find yourself about to use a `gsd:*` skill, stop and follow the framework pipeline in Section 2 instead.
+
 **Stack collection (always required — with or without Superpowers):**
 
 At the `idea` stage, if `stack.config.json` is empty (`{}`), you **must** ask the user these questions one at a time before doing anything else:
